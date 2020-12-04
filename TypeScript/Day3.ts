@@ -1,5 +1,3 @@
-import { Console } from "console";
-import { Direction } from "readline";
 import Day from "./Day";
 import * as MyMap from "./Map";
 
