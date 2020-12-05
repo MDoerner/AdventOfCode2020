@@ -3,15 +3,13 @@ mod day;
 use std::{path::Path, path::PathBuf, env};
 use std::fs;
 
-use day::DaySolver;
-
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let maybeConfig = puzzleConfig(args);
+    let maybe_config: Option<PuzzleConfiguration> = puzzle_config(args);
     let output: String;
-    match maybeConfig{
+    match maybe_config{
         None => return,
-        Some(config) => output = puzzleOutput(config),
+        Some(config) => output = puzzle_output(config),
     };
     println!("{}", output);
 }
@@ -21,7 +19,7 @@ struct PuzzleConfiguration {
     part: i32
 }
 
-fn puzzleConfig(args: Vec<String>) -> Option<PuzzleConfiguration>{
+fn puzzle_config(args: Vec<String>) -> Option<PuzzleConfiguration>{
     if args.len() < 3 {
         return None;
     }
@@ -47,15 +45,15 @@ fn puzzleConfig(args: Vec<String>) -> Option<PuzzleConfiguration>{
     return Some(PuzzleConfiguration {day: day, part: part});
 }
 
-fn puzzleOutput(config: PuzzleConfiguration) -> String{
+fn puzzle_output(config: PuzzleConfiguration) -> String{
     let solver: Box<dyn day::DaySolver>;
-    match day::getDay(&config.day){
-        Some(daySolver) => solver = daySolver,
+    match day::get_day(&config.day){
+        Some(day_solver) => solver = day_solver,
         None => return String::from("")
     };
 
     let input: String;
-    match puzzleInput(&config){
+    match puzzle_input(&config){
         Some(text) => input = text,
         None => return String::from("")
     }
@@ -67,19 +65,17 @@ fn puzzleOutput(config: PuzzleConfiguration) -> String{
     }
 }
 
-fn puzzleInput(&config: &PuzzleConfiguration) -> Option<String>{
-    let path: PathBuf = puzzleFilePath(&config);
+fn puzzle_input(config: &PuzzleConfiguration) -> Option<String>{
+    let path: PathBuf = puzzle_file_path(&config);
     match fs::read_to_string(path){
         Err(_) => return None,
         Ok(text) => return Some(text)
     }
 }
 
-fn puzzleFilePath(&config: &PuzzleConfiguration) -> PathBuf{
-    let filename = puzzleFileName(&config);
-    let path: PathBuf = Path::new(file!())
-                            .parent().unwrap()
-                            .parent().unwrap()
+fn puzzle_file_path(config: &PuzzleConfiguration) -> PathBuf{
+    let filename = puzzle_file_name(&config);
+    let mut path: PathBuf = Path::new(env!("CARGO_MANIFEST_DIR"))
                             .parent().unwrap()
                             .parent().unwrap()
                             .to_path_buf();
@@ -88,7 +84,7 @@ fn puzzleFilePath(&config: &PuzzleConfiguration) -> PathBuf{
     return path;
 }
 
-fn puzzleFileName(&config: &PuzzleConfiguration) -> String{
+fn puzzle_file_name(config: &PuzzleConfiguration) -> String{
     let day: &str = &config.day.to_string();
     return ["Day", day, ".txt"].join("");
 }
