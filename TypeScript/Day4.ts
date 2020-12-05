@@ -33,10 +33,10 @@ class Day4 implements Day<TravelDocument[]>{
         return text.replace(/\r?\n/g, ' ')
             .split(' ')
             .map((documentItem: string) => documentItem.split(':'))
-            .reduce((document: TravelDocument, item: [string, string]) => {
+            .reduce((document: any, item: string[]) => {
                     document[item[0]] = item[1];
                     return document;
-                }, {});
+                }, {}) as TravelDocument;
     }
 
     solvePart1(input: TravelDocument[]): string {

@@ -11,7 +11,7 @@ interface PuzzleConfiguration{
     part: number
 }
 
-function puzzleConfig(args: string[]): PuzzleConfiguration{
+function puzzleConfig(args: string[]): PuzzleConfiguration | null{
     if(args.length < 4){
         return null;
     }
@@ -37,7 +37,7 @@ function puzzlePath(day: number): string{
     return path.join(basePath, filename);
 }
 
-function puzzleSolver(day: number): Day<any>{
+function puzzleSolver(day: number): Day<any> | null{
     let dayCreator: NewDay;
     try {
         let imported = require(`./Day${day}`) as any;
@@ -59,8 +59,12 @@ function puzzleOutput(config: PuzzleConfiguration): string{
     let input = puzzleInput(config.day);
     let solver = puzzleSolver(config.day);
     
-    if(!solver || !input){
-        return "";
+    if(!solver){
+        return "No solver found!";
+    }
+
+    if(!input){
+        return "No input found!";
     }
 
     let parsedInput = solver.parseInput(input);
@@ -73,5 +77,7 @@ function puzzleOutput(config: PuzzleConfiguration): string{
 }
 
 let config = puzzleConfig(process.argv);
-let output = puzzleOutput(config);
-console.log(output);
+if(config){
+    let output = puzzleOutput(config);
+    console.log(output);
+}

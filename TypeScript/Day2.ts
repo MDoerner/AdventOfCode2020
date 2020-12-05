@@ -11,22 +11,25 @@ interface PasswordData{
     password: string
 }
 
-class Day2 implements Day<PasswordData[]>{
+class Day2 implements Day<(PasswordData | null)[]>{
     constructor(){}
 
-    parseInput(input: string): PasswordData[]{
+    parseInput(input: string): (PasswordData | null)[]{
         return input.split(/\r?\n/).map((s: string) => this.parsePasswordData(s));
     }
 
-    private parsePasswordData(line: string): PasswordData{
+    private parsePasswordData(line: string): PasswordData | null{
         let parts = line.match(/(\d+)-(\d+) (\w): (.*)/);
+        if(!parts){
+            return null;
+        }
         let rule: PasswordRule = {character: parts[3], minNumber: parseInt(parts[1]), maxNumber: parseInt(parts[2]) };
         return {rule: rule, password: parts[4]};
     }
 
-    solvePart1(input: PasswordData[]): string{
+    solvePart1(input: (PasswordData | null)[]): string{
         return input
-        .filter((data: PasswordData) => this.validateSledPasswordData(data))
+        .filter((data: PasswordData | null) => data && this.validateSledPasswordData(data))
         .length
         .toString();
     }
@@ -48,9 +51,9 @@ class Day2 implements Day<PasswordData[]>{
         return count;
     }
 
-    solvePart2(input: PasswordData[]): string{
+    solvePart2(input: (PasswordData | null)[]): string{
         return input
-        .filter((data: PasswordData) => this.validateTobogganPasswordData(data))
+        .filter((data: PasswordData | null) => data && this.validateTobogganPasswordData(data))
         .length
         .toString();
     }
