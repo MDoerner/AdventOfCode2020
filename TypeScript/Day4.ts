@@ -1,5 +1,4 @@
 import Day from "./Day";
-import * as MyMap from "./Map";
 
 interface TravelDocument{
     byr?: string;

@@ -10,4 +10,6 @@
 **/*.rs.bk
 
 /TypeScript/node_modules/
+/TypeScript/out/
+/TypeScript/.vscode/
 /Rust/.vscode/
