@@ -32,7 +32,7 @@ function inputFromFile(path: string): string {
 }
 
 function puzzlePath(day: number): string{
-    let basePath = path.join(__dirname, '..', 'Input');
+    let basePath = path.join(__dirname, '..', '..', 'Input');
     let filename = "Day" + day + ".txt";
     return path.join(basePath, filename);
 }
@@ -76,8 +76,17 @@ function puzzleOutput(config: PuzzleConfiguration): string{
     }
 }
 
-let config = puzzleConfig(process.argv);
-if(config){
-    let output = puzzleOutput(config);
-    console.log(output);
+class AdventOfCodeRunner{
+    adventOfCode2020(){
+        let config = puzzleConfig(process.argv);
+        if(config){
+            let output = puzzleOutput(config);
+            console.log(output);
+        }
+    }
 }
+
+export = AdventOfCodeRunner;
+
+let adventRunner = new AdventOfCodeRunner();
+adventRunner.adventOfCode2020();
