@@ -1,6 +1,5 @@
 {
     "name": "adventOfCode2020",
     "version": "0.0.1",
-    "main": "adventOfCode2020.ts",
-    "type": "module"
+    "main": "adventOfCode2020.ts"
 }

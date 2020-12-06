@@ -5,7 +5,7 @@ interface Seat{
     column: number;
 }
 
-class Day4 implements Day<Seat[]>{
+class Day5 implements Day<Seat[]>{
     parseInput(text: string): Seat[] {
         return text.split(/\r?\n/)
             .map((line: string) => this.parseBoardingCard(line));
@@ -49,4 +49,4 @@ function seatId(seat: Seat): number{
     return seat.row * 8 + seat.column;
 }
 
-export default Day4;
+export default Day5;
