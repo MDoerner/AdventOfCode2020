@@ -21,28 +21,7 @@ class Day1 implements Day<number[]>{
     }
 
     private findSummingPairInSorted(sortedInput: number[], desiredSum: number): [number, number] | null{
-        if(sortedInput.length < 2){
-            return null;
-        }
-        
-        let lowerIndex: number = 0;
-        let higherIndex: number = sortedInput.length - 1;
-        let currentLowerValue = sortedInput[lowerIndex];
-        let currentHigherValue = sortedInput[higherIndex];
-        while(higherIndex > lowerIndex){
-            let currentSum = currentLowerValue + currentHigherValue
-            if(currentSum > desiredSum){
-                higherIndex -= 1;
-                currentHigherValue = sortedInput[higherIndex];
-            } else if (currentSum < desiredSum){
-                lowerIndex += 1;
-                currentLowerValue = sortedInput[lowerIndex];
-            } else {
-                return [currentLowerValue, currentHigherValue];
-            }
-        }
-        
-        return null;
+        return findSummingPairInSorted(sortedInput, desiredSum);
     }
 
     solvePart2(input: number[]): string{
@@ -80,5 +59,29 @@ class Day1 implements Day<number[]>{
     }
 }
 
+export function findSummingPairInSorted(sortedInput: number[], desiredSum: number): [number, number] | null{
+    if(sortedInput.length < 2){
+        return null;
+    }
+    
+    let lowerIndex: number = 0;
+    let higherIndex: number = sortedInput.length - 1;
+    let currentLowerValue = sortedInput[lowerIndex];
+    let currentHigherValue = sortedInput[higherIndex];
+    while(higherIndex > lowerIndex){
+        let currentSum = currentLowerValue + currentHigherValue
+        if(currentSum > desiredSum){
+            higherIndex -= 1;
+            currentHigherValue = sortedInput[higherIndex];
+        } else if (currentSum < desiredSum){
+            lowerIndex += 1;
+            currentLowerValue = sortedInput[lowerIndex];
+        } else {
+            return [currentLowerValue, currentHigherValue];
+        }
+    }
+    
+    return null;
+}
 
 export default Day1;
