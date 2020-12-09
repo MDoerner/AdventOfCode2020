@@ -1,5 +1,7 @@
 mod day;
 
+extern crate regex;
+
 use std::{path::Path, path::PathBuf, env};
 use std::fs;
 

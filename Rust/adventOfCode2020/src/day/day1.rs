@@ -31,7 +31,7 @@ fn find_summing_pair(candidates: Vec<i32>, desired_sum: i32) -> Option<(i32, i32
     return find_summing_pair_in_sorted(&sorted_numbers, desired_sum, 0)
 }
 
-fn find_summing_pair_in_sorted(sorted_candidates: &Vec<i32>, desired_sum: i32, lowest_index: usize) -> Option<(i32, i32)>{
+pub fn find_summing_pair_in_sorted(sorted_candidates: &Vec<i32>, desired_sum: i32, lowest_index: usize) -> Option<(i32, i32)>{
     if sorted_candidates.len() < 2 {
         return None;
     }
