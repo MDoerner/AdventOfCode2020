@@ -1,4 +1,5 @@
 import Day from "./Day";
+import * as Util from "./Util";
 
 enum OpCode {
     noOp = 'nop',
@@ -21,7 +22,7 @@ class Day8 implements Day<Instruction[]>{
     parseInput(text: string): Instruction[] {
         return text.split(/\r?\n/)
             .map((line: string) => this.parseInstruction(line))
-            .filter(notEmpty);
+            .filter(Util.notEmpty);
     }
 
     private parseInstruction(instructionText: string): Instruction | null{
@@ -136,8 +137,5 @@ class NonLoopingHandheld{
     }
 }
 
-function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
-    return value !== null && value !== undefined;
-}
 
 export default Day8;

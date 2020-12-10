@@ -1,4 +1,5 @@
 import Day from "./Day";
+import * as Util from "./Util";
 
 interface BagType{
     appearance: string;
@@ -19,7 +20,7 @@ class Day7 implements Day<LuggageRule[]>{
     parseInput(text: string): LuggageRule[] {
         return text.split(/\r?\n/)
             .map((line: string) => this.parseLuggageRule(line))
-            .filter(notEmpty);
+            .filter(Util.notEmpty);
     }
 
     private parseLuggageRule(ruleText: string): LuggageRule | null{
@@ -45,7 +46,7 @@ class Day7 implements Day<LuggageRule[]>{
         const containingBagDefinitions: string[] = containedBagsText.split(',');
         containingBagDefinitions
             .map((definition: string) => this.parseContainingBagSpecification(definition))
-            .filter(notEmpty)
+            .filter(Util.notEmpty)
             .forEach((bagSpecification: [BagType, number]) => containedBags.set(bagSpecification[0], bagSpecification[1]));
 
             return containedBags;
@@ -185,30 +186,16 @@ class Day7 implements Day<LuggageRule[]>{
     }
 
     private addBagTotals(totals: Map<string, number>, bagType: string, count: number, containedBags: Map<string,Map<string,number>>){
-        this.addCount(totals, bagType, count);
+        Util.addCount(totals, bagType, count);
         let containedBagTotals: Map<string, number> = containedBags.get(bagType) as Map<string, number>;
         for(let element of containedBagTotals){
             let containedBag: string = element[0];
             let numberOfBags: number = element[1];
-            this.addCount(totals, containedBag, numberOfBags * count);
+            Util.addCount(totals, containedBag, numberOfBags * count);
         }
     }
-
-    private addCount(counts: Map<string, number>, key: string, count: number){
-        if(!counts.has(key)){
-            counts.set(key, count);
-        } else {
-            const oldCount: number = counts.get(key) as number;
-            counts.set(key, oldCount + count);
-
-        }
-    }
-
 }
 
-function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
-    return value !== null && value !== undefined;
-}
 
 
 export default Day7;
