@@ -6,12 +6,51 @@ export interface Point{
 export interface Vector extends Point{}
 export interface Direction extends Vector{}
 
+export function copyVector(vector: Vector): Vector{
+    return {x: vector.x, y: vector.y};
+}
+
 export function add(base: Point, offset: Vector): Point{
     return {x: base.x + offset.x, y: base.y + offset.y};
 }
 
 export function scaledVector(vector: Vector, scale: number): Vector{
     return {x: vector.x * scale, y: vector.y * scale};
+}
+
+export function move(toMove: Point, offset: Vector, amplitude: number): Point{
+    return add( toMove, scaledVector(offset, amplitude));
+}
+
+export function rotatedVector(vector: Vector, angleToAdd: number): Vector{
+    //Rotation is a linear operation.
+    const rotatedX: Vector = scaledVector(new AngleDirection(angleToAdd), vector.x);
+    const rotatedY: Vector = scaledVector(new AngleDirection(angleToAdd + 90), vector.y);
+    return add(rotatedX, rotatedY);
+}
+
+//Retirns undefined exactly for the zero vector.
+export function angleOfVector(vector: Vector): number | undefined{
+    if(vector.x == 0 && vector.y == 0){
+        return undefined;
+    }
+
+    if(vector.x == 0){
+        return vector.y > 0 ? 90 : -90;
+    }
+
+    //This has been added to get the cardinal directions right although computations using the functions and constants in Math suffer from numeric errors.
+    if(vector.y == 0){
+        return vector.x > 0 ? 0 : 180;
+    }
+
+    if(vector.x > 0){
+        return Math.atan(vector.y/vector.x) * 180/Math.PI;
+    }
+
+    if(vector.x < 0){
+        return Math.atan(vector.y/vector.x) * 180/Math.PI + 180;
+    }
 }
 
 export class IntegralDirection implements Direction{
@@ -54,13 +93,41 @@ function gcd(a: number, b:number): number{
 
 export class AngleDirection implements Direction{
     private angle: number;
-    x: number;
-    y: number;
+    x: number = 0;
+    y: number = 0;
 
     constructor(initialAngle: number){
         this.angle = initialAngle;
-        this.x = Math.cos(Math.PI * this.angle/180);
-        this.y = Math.sin(Math.PI * this.angle/180);
+        this.updateXY();
+    }
+
+    //This is necessary because Math.cos nd Math.sin do not return exact results for k/2 * Math.PI where k is a whole number.
+    private updateXY(): void{
+        switch(this.angle % 360){
+            case 0:
+                this.x = 1;
+                this.y = 0;
+                break;
+            case 90:
+            case -270:
+                this.x = 0;
+                this.y = 1;
+                break;
+            case 180:
+            case -180:
+                this.x = -1;
+                this.y = 0;
+                break;
+            case 270:
+            case -90:
+                this.x = 0;
+                this.y = -1;
+                break;
+            default:
+                this.x = Math.cos(Math.PI * this.angle/180);
+                this.y = Math.sin(Math.PI * this.angle/180);
+                break;
+        }
     }
 
     addAngle(angle: number): AngleDirection{
@@ -85,4 +152,17 @@ function generateGridNeighbourOffsets(): Vector[]{
         }
     }
     return offsets;
+}
+
+export function l1Norm(vector: Vector): number{
+    return Math.abs(vector.x) + Math.abs(vector.y);
+}
+
+export function l2Norm(vector: Vector): number{
+    return Math.sqrt((vector.x)^2 + (vector.y)^2);
+}
+
+export function manhattanDistance(point: Point, otherPoint: Point): number{
+    const differenceVector: Vector = add(point, scaledVector(otherPoint, -1));
+    return l1Norm(differenceVector);
 }
