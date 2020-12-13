@@ -1,3 +1,6 @@
+import * as Util from "./Util";
+
+
 export interface Point{
     readonly x: number
     readonly y: number
@@ -76,19 +79,11 @@ export class IntegralDirection implements Direction{
             return;
         }
 
-        let divisor: number = gcd(Math.abs(direction.x), Math.abs(direction.y));
+        let divisor: number = Util.gcd(Math.abs(direction.x), Math.abs(direction.y));
 
         this.x = direction.x / divisor;
         this.y = direction.y / divisor;
     }
-}
-
-function gcd(a: number, b:number): number{
-    if(b == 0){
-        return a;
-    }
-
-    return gcd(b, a % b);
 }
 
 export class AngleDirection implements Direction{

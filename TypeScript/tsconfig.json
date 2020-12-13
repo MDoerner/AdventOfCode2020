@@ -5,7 +5,7 @@
         "moduleResolution": "node",
         "esModuleInterop": true,
         "module": "commonJS",
-        "target": "es6",
+        "target": "esnext",
         "noImplicitAny": true,
         "strictNullChecks": true,
         "strict": true
