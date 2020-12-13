@@ -36,8 +36,8 @@ export function gcd(a: number, b:number): number{
 }
 
 export function extendedEuclid(a: bigint, b:bigint): [bigint, bigint, bigint]{
-    if(a == BigInt(0)){
-        return [b, BigInt(0), BigInt(1)];
+    if(a == 0n){
+        return [b, 0n, 1n];
     }
 
     const recursiveResult: [bigint, bigint, bigint] = extendedEuclid(b % a, a);
@@ -83,7 +83,7 @@ export function directChineseRemainder(remainderModuloPairs: [bigint, bigint][])
 
 export function modulo(a: bigint, b: bigint): bigint{
     const jsModulo: bigint = a % b;
-    return jsModulo < 0 ? (b >= 0 ? jsModulo + b : jsModulo - b) : jsModulo;
+    return jsModulo < 0n ? (b >= 0n ? jsModulo + b : jsModulo - b) : jsModulo;
 }
 
 export function parseBigInt(text: string): bigint{

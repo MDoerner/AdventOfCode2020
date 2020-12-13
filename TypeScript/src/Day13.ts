@@ -54,11 +54,6 @@ class Day13 implements Day<[number, string[]]>{
         const contestInput: ContestData[] = this.parseContestData(input[1]);
         const remainderModuloPairs: [bigint, bigint][] = contestInput.map((contestData: ContestData) => [contestData.timeSinceLastDeparture, contestData.busId]);
         const result: bigint = Util.chineseRemainder(remainderModuloPairs);
-
-        for(let contestData of contestInput){
-            console.log(contestData.busId + ', ' + contestData.timeSinceLastDeparture + ': ' + Util.modulo(result, contestData.busId));
-        }
-
         return result.toString();
     }
 
@@ -74,7 +69,7 @@ class Day13 implements Day<[number, string[]]>{
     }
 
     private timeSinceLastDeparture(offsetFromFirstBus: bigint, busId: bigint): bigint{
-        return offsetFromFirstBus == BigInt(0) ? BigInt(0) : busId - (offsetFromFirstBus % busId);
+        return offsetFromFirstBus == 0n ? 0n : busId - (offsetFromFirstBus % busId);
     }
 
 }
