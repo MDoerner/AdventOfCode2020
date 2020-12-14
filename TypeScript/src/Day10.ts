@@ -11,8 +11,8 @@ class Day10 implements Day<number[]>{
     solvePart1(input: number[]): string {
         let sortedInput: number[] = input.sort((m: number, n: number) => m - n);
         let joltageGapDistribution: Map<number,number> = this.joltageGapDistribution(sortedInput);
-        let oneCount = Util.zeroIfInvalid(joltageGapDistribution.get(1));
-        let threeCount = Util.zeroIfInvalid(joltageGapDistribution.get(3));
+        let oneCount = Util.defaultIfInvalid(joltageGapDistribution.get(1), 0);
+        let threeCount = Util.defaultIfInvalid(joltageGapDistribution.get(3), 0);
         return (oneCount * threeCount).toString();
     }
 

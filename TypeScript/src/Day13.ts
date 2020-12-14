@@ -1,5 +1,6 @@
 import Day from "./Day";
 import * as Util from "./Util";
+import * as Algebra from "./Algebra";
 
 interface ContestData{
     busId: bigint;
@@ -51,7 +52,7 @@ class Day13 implements Day<[number, string[]]>{
     solvePart2(input: [number, string[]]): string {
         const contestInput: ContestData[] = this.parseContestData(input[1]);
         const remainderModuloPairs: [bigint, bigint][] = contestInput.map((contestData: ContestData) => [contestData.timeSinceLastDeparture, contestData.busId]);
-        const result: bigint | null = Util.chineseRemainder(remainderModuloPairs);
+        const result: bigint | null = Algebra.chineseRemainder(remainderModuloPairs);
         if(result == null){
             return "There is no result!";
         }
@@ -62,8 +63,8 @@ class Day13 implements Day<[number, string[]]>{
         let contestData: ContestData[] = [];
         for(let index in busTable){
             if(busTable[index] != 'x'){
-                const busId: bigint = Util.parseBigInt(busTable[index]);
-                contestData.push({busId: busId, timeSinceLastDeparture: this.timeSinceLastDeparture(Util.parseBigInt(index), busId)})
+                const busId: bigint = BigInt(busTable[index]);
+                contestData.push({busId: busId, timeSinceLastDeparture: this.timeSinceLastDeparture(BigInt(index), busId)})
             }
         }
         return contestData;

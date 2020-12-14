@@ -1,4 +1,4 @@
-import * as Util from "./Util";
+import * as Algebra from "./Algebra";
 
 
 export interface Point{
@@ -79,7 +79,7 @@ export class IntegralDirection implements Direction{
             return;
         }
 
-        let divisor: number = Util.gcd(Math.abs(direction.x), Math.abs(direction.y));
+        let divisor: number = Algebra.gcd(Math.abs(direction.x), Math.abs(direction.y));
 
         this.x = direction.x / divisor;
         this.y = direction.y / divisor;
