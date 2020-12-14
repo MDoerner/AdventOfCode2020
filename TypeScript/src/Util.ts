@@ -48,37 +48,32 @@ export function extendedEuclid(a: bigint, b:bigint): [bigint, bigint, bigint]{
     return [remainder, t - b/a * s, s];
 }
 
-export function chineseRemainder(remainderModuloPairs: [bigint, bigint][]): bigint{
-    let currentSolution: bigint = remainderModuloPairs[0][0];
+export function chineseRemainder(remainderModuloPairs: [bigint, bigint][]): bigint | null{
+    let currentSolution: bigint | null = remainderModuloPairs[0][0];
     let currentModulo: bigint = remainderModuloPairs[0][1];
     for(let index = 1; index < remainderModuloPairs.length; index++){
-        currentSolution = chineseRemainderForTwo(currentSolution, currentModulo, remainderModuloPairs[index][0], remainderModuloPairs[index][1]);
-        currentModulo *= remainderModuloPairs[index][1];
+        let stepResult: [bigint, bigint] | null = chineseRemainderForTwo(currentSolution, currentModulo, remainderModuloPairs[index][0], remainderModuloPairs[index][1]);
+        if(stepResult == null){
+            return null;
+        }
+        currentSolution = stepResult[0];
+        currentModulo = stepResult[1];
     }
     return currentSolution;
 }
 
-function chineseRemainderForTwo(remainder1: bigint, modulo1: bigint, remainder2: bigint, modulo2: bigint): bigint{
+function chineseRemainderForTwo(remainder1: bigint, modulo1: bigint, remainder2: bigint, modulo2: bigint): [bigint, bigint] | null{
     const extendedEuclidResult: [bigint, bigint, bigint] = extendedEuclid(modulo1, modulo2);
-    const solution: bigint = remainder1 * extendedEuclidResult[2] * modulo2 + remainder2 * extendedEuclidResult[1] * modulo1;
-    return modulo(solution, (modulo1 * modulo2));
-}
-
-export function directChineseRemainder(remainderModuloPairs: [bigint, bigint][]): bigint{
-    const productOfModulos: bigint = remainderModuloPairs.reduce((product: bigint, pair: [bigint, bigint]) => product * pair[1], BigInt(1));
-    const otherModulos: bigint[] = remainderModuloPairs.map((pair: [bigint, bigint]) => productOfModulos/pair[1]);
-    let bezoutNumbers: bigint[] = [];
-    for(let index in remainderModuloPairs){
-        let euclidResult: [bigint, bigint, bigint] = extendedEuclid(otherModulos[index], remainderModuloPairs[index][1]);
-        bezoutNumbers.push(euclidResult[1]);
+    const gcd: bigint = extendedEuclidResult[0];
+    const firstCoeffcient: bigint = remainder1 / gcd;
+    const secondCoefficient: bigint = remainder2 / gcd;
+    const offset: bigint = modulo(remainder1, gcd);
+    if(modulo(remainder2, gcd) != offset){
+        return null;
     }
-
-    let result: bigint = BigInt(0);
-    for(let index in remainderModuloPairs){
-        result = modulo(result + bezoutNumbers[index] * otherModulos[index] * remainderModuloPairs[index][0], productOfModulos);
-    }
-
-    return result;
+    const solution: bigint = firstCoeffcient * extendedEuclidResult[2] * modulo2 + secondCoefficient * extendedEuclidResult[1] * modulo1 + offset;
+    const nextModulo: bigint = (modulo1 * modulo2) / gcd;
+    return [modulo(solution, nextModulo), nextModulo];
 }
 
 export function modulo(a: bigint, b: bigint): bigint{

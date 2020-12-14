@@ -48,12 +48,13 @@ class Day13 implements Day<[number, string[]]>{
         return busId - (startTime % busId);
     }
 
-    //This only solves the case of coprime periods for now since all input ids are prime.
-    //I will figure out the general case later.
     solvePart2(input: [number, string[]]): string {
         const contestInput: ContestData[] = this.parseContestData(input[1]);
         const remainderModuloPairs: [bigint, bigint][] = contestInput.map((contestData: ContestData) => [contestData.timeSinceLastDeparture, contestData.busId]);
-        const result: bigint = Util.chineseRemainder(remainderModuloPairs);
+        const result: bigint | null = Util.chineseRemainder(remainderModuloPairs);
+        if(result == null){
+            return "There is no result!";
+        }
         return result.toString();
     }
 
