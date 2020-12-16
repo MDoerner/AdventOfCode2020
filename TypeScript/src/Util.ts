@@ -32,3 +32,8 @@ export function modulo(a: bigint, b: bigint): bigint{
     const jsModulo: bigint = a % b;
     return jsModulo < 0n ? (b >= 0n ? jsModulo + b : jsModulo - b) : jsModulo;
 }
+
+export function concatSet<T>(array: T[], set: Set<T>): T[]{
+    set.forEach((element: T) => array.push(element));
+    return array;
+}

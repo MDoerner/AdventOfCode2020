@@ -1,5 +1,4 @@
 import Day from "./Day";
-import * as Util from "./Util";
 import * as Algebra from "./Algebra";
 
 interface ContestData{
