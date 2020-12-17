@@ -37,3 +37,40 @@ export function concatSet<T>(array: T[], set: Set<T>): T[]{
     set.forEach((element: T) => array.push(element));
     return array;
 }
+
+
+export class StructSet<T>{
+    private readonly backingStore: Set<string> = new Set<string>();
+
+    has(element: T): boolean{
+        return this.backingStore.has(this.toKey(element));
+    }
+
+    private toKey(element: T): string{
+        return JSON.stringify(element);
+    }
+
+    add(element: T): void {
+        this.backingStore.add(this.toKey(element));
+    }
+
+    delete(element: T): void {
+        this.backingStore.delete(this.toKey(element));
+    }
+
+    toArray(): T[]{
+        let points: T[] = [];
+        for(let point of this.backingStore.keys()){
+            points.push(this.fromKey(point));
+        }
+        return points;
+    }
+
+    private fromKey(key: string): T{
+        return JSON.parse(key);
+    }
+
+    size(): number{
+        return this.backingStore.size;
+    }
+}
