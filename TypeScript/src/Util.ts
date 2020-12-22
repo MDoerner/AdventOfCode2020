@@ -22,9 +22,12 @@ export function unionWith<T>(set: Set<T>, otherSet: Set<T>): Set<T>{
     return set;
 }
 
-export function union<T>(set: Set<T>, otherSet: Set<T>): Set<T>{
+export function union<T>(sets: IterableIterator<Set<T>>): Set<T>{
     const newSet = new Set<T>();
-    return unionWith(unionWith(newSet, set), otherSet);
+    for(let set of sets){
+        unionWith(newSet, set);
+    }
+    return newSet;
 }
 
 //Modulo with the guarantee to return a positive value.
@@ -37,7 +40,6 @@ export function concatSet<T>(array: T[], set: Set<T>): T[]{
     set.forEach((element: T) => array.push(element));
     return array;
 }
-
 
 export class StructSet<T>{
     private readonly backingStore: Set<string> = new Set<string>();
@@ -73,4 +75,30 @@ export class StructSet<T>{
     size(): number{
         return this.backingStore.size;
     }
+}
+
+export function addToValueSet<T, U>(key: T, value: U, map: Map<T, Set<U>>): void{
+    if(map.has(key)){
+        const valueSet: Set<U> = map.get(key) as Set<U>;
+        valueSet.add(value);
+    } else {
+        map.set(key, new Set<U>([value]));
+    }
+}
+
+export function addToValueList<T, U>(key: T, value: U, map: Map<T, U[]>): void{
+    if(map.has(key)){
+        const valueList: U[] = map.get(key) as U[];
+        valueList.push(value);
+    } else {
+        map.set(key, [value]);
+    }
+}
+
+export function reduce<T, U>(iterator: IterableIterator<T>, reductionFunction:(previousValue: U, nextItem: T) => U, startValue: U): U{
+    let currentValue: U = startValue;
+    for(let item of iterator){
+        currentValue = reductionFunction(currentValue, item);
+    }
+    return currentValue;
 }
