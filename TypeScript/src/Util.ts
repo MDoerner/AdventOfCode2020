@@ -102,3 +102,53 @@ export function reduce<T, U>(iterator: IterableIterator<T>, reductionFunction:(p
     }
     return currentValue;
 }
+
+export class Queue<T>{
+    private dequeueStore: T[] = [];
+    private enqueueStore: T[] = [];
+    private _size: number;
+
+    constructor(initialContent: T[] = []){
+        this.dequeueStore = Array.from(initialContent).reverse(); //copy
+        this._size = this.dequeueStore.length;
+    }
+
+    [Symbol.iterator](): IterableIterator<T> {
+        throw new Error("Method not implemented.");
+    }
+
+    get size(): number{
+        return this._size;
+    }
+
+    enqueue(item: T): void{
+        this.enqueueStore.push(item);
+        this._size++;
+    }
+
+    dequeue(): T | undefined{
+        if(this.size == 0){
+            return undefined;
+        }
+        if(this.dequeueStore.length == 0){
+            this.shiftToDequeue();
+        }
+        this._size--;
+        return this.dequeueStore.pop();
+    }
+
+    private shiftToDequeue(): void{
+        this.dequeueStore = this.enqueueStore.reverse().concat(this.dequeueStore);
+        this.enqueueStore = [];
+    }
+
+    peek(numberOfElements: number): T[] | undefined{
+        if(numberOfElements > this.size){
+            return undefined;
+        }
+        if(numberOfElements > this.dequeueStore.length){
+            this.shiftToDequeue();
+        }
+        return this.dequeueStore.slice(this.dequeueStore.length - numberOfElements).reverse();
+    }
+}
