@@ -41,7 +41,7 @@ class Day17 implements Day<Util.StructSet<Plane.Point>>{
         for(let iteration: number = 1; iteration <= 6; iteration++){
             this.executeStep(activePoints, Plane.gridNeighbours3d);
         }
-        const result: number = activePoints.size();
+        const result: number = activePoints.size;
         return result.toString();
     }
 
@@ -94,7 +94,7 @@ class Day17 implements Day<Util.StructSet<Plane.Point>>{
         for(let iteration: number = 1; iteration <= 6; iteration++){
             this.executeStep(activePoints, Plane.gridNeighbours);
         }
-        const result: number = activePoints.size();
+        const result: number = activePoints.size;
         return result.toString();
     }
 

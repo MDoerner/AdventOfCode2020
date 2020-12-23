@@ -36,6 +36,11 @@ export function modulo(a: bigint, b: bigint): bigint{
     return jsModulo < 0n ? (b >= 0n ? jsModulo + b : jsModulo - b) : jsModulo;
 }
 
+export function moduloP(a: number, b: number): number{
+    const jsModulo: number = a % b;
+    return jsModulo < 0 ? (b >= 0 ? jsModulo + b : jsModulo - b) : jsModulo;
+}
+
 export function concatSet<T>(array: T[], set: Set<T>): T[]{
     set.forEach((element: T) => array.push(element));
     return array;
@@ -72,7 +77,7 @@ export class StructSet<T>{
         return JSON.parse(key);
     }
 
-    size(): number{
+    get size(): number{
         return this.backingStore.size;
     }
 }
@@ -84,6 +89,10 @@ export function addToValueSet<T, U>(key: T, value: U, map: Map<T, Set<U>>): void
     } else {
         map.set(key, new Set<U>([value]));
     }
+}
+
+export function reverseString(str: string): string{
+    return Array.from(str).reverse().join('');
 }
 
 export function addToValueList<T, U>(key: T, value: U, map: Map<T, U[]>): void{
