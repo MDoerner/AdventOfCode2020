@@ -82,6 +82,46 @@ export class StructSet<T>{
     }
 }
 
+export class StructMap<T, U>{
+    private readonly backingStore: Map<string, U> = new Map<string, U>();
+
+    has(element: T): boolean{
+        return this.backingStore.has(this.toKey(element));
+    }
+
+    private toKey(element: T): string{
+        return JSON.stringify(element);
+    }
+
+    set(key: T, value: U): void {
+        this.backingStore.set(this.toKey(key), value);
+    }
+
+    get(key: T): U | undefined {
+        return this.backingStore.get(this.toKey(key));
+    }
+
+    delete(element: T): void {
+        this.backingStore.delete(this.toKey(element));
+    }
+
+    toArray(): [T,U][]{
+        let entries: [T,U][] = [];
+        for(let entry of this.backingStore.entries()){
+            entries.push([this.fromKey(entry[0]), entry[1]]);
+        }
+        return entries;
+    }
+
+    private fromKey(key: string): T{
+        return JSON.parse(key);
+    }
+
+    get size(): number{
+        return this.backingStore.size;
+    }
+}
+
 export function addToValueSet<T, U>(key: T, value: U, map: Map<T, Set<U>>): void{
     if(map.has(key)){
         const valueSet: Set<U> = map.get(key) as Set<U>;
