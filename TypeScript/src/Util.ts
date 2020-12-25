@@ -46,8 +46,17 @@ export function concatSet<T>(array: T[], set: Set<T>): T[]{
     return array;
 }
 
-export class StructSet<T>{
+export class StructSet<T> implements Iterable<T>{
     private readonly backingStore: Set<string> = new Set<string>();
+
+    constructor(initialItems?: Iterable<T>){
+        if(initialItems == undefined){
+            this.backingStore = new Set<string>();
+        } else {
+            const initialKeys: Iterable<string> = map(initialItems, (item: T) => this.toKey(item));
+            this.backingStore = new Set<string>(initialKeys);
+        }
+    }
 
     has(element: T): boolean{
         return this.backingStore.has(this.toKey(element));
@@ -65,12 +74,10 @@ export class StructSet<T>{
         this.backingStore.delete(this.toKey(element));
     }
 
-    toArray(): T[]{
-        let points: T[] = [];
-        for(let point of this.backingStore.keys()){
-            points.push(this.fromKey(point));
-        }
-        return points;
+    *[Symbol.iterator](): Iterator<T, any, undefined> {
+        for(const item of this.backingStore){
+            yield this.fromKey(item);
+        };
     }
 
     private fromKey(key: string): T{
@@ -82,7 +89,7 @@ export class StructSet<T>{
     }
 }
 
-export class StructMap<T, U>{
+export class StructMap<T, U> implements Iterable<[T,U]>{
     private readonly backingStore: Map<string, U> = new Map<string, U>();
 
     has(element: T): boolean{
@@ -105,12 +112,26 @@ export class StructMap<T, U>{
         this.backingStore.delete(this.toKey(element));
     }
 
-    toArray(): [T,U][]{
-        let entries: [T,U][] = [];
-        for(let entry of this.backingStore.entries()){
-            entries.push([this.fromKey(entry[0]), entry[1]]);
+    *[Symbol.iterator](): Iterator<[T, U], any, undefined> {
+        for(const [key, value] of this.backingStore){
+            yield [this.fromKey(key), value];
         }
-        return entries;
+    }
+
+    *entires(): IterableIterator<[T, U]> {
+        for(const [key, value] of this.backingStore.entries()){
+            yield [this.fromKey(key), value];
+        }
+    }
+
+    *keys(): IterableIterator<T> {
+        for(const key of this.backingStore.keys()){
+            yield this.fromKey(key);
+        }
+    }
+
+    values(): IterableIterator<U> {
+        return this.backingStore.values();
     }
 
     private fromKey(key: string): T{
@@ -144,12 +165,30 @@ export function addToValueList<T, U>(key: T, value: U, map: Map<T, U[]>): void{
     }
 }
 
-export function reduce<T, U>(iterator: IterableIterator<T>, reductionFunction:(previousValue: U, nextItem: T) => U, startValue: U): U{
+export function reduce<T, U>(iterable: Iterable<T>, reductionFunction:(previousValue: U, nextItem: T) => U, startValue: U): U{
     let currentValue: U = startValue;
-    for(let item of iterator){
+    for(let item of iterable){
         currentValue = reductionFunction(currentValue, item);
     }
     return currentValue;
+}
+
+export function count<T>(iterable: Iterable<T>): number{
+    return reduce(iterable, (count: number, _: T) => count + 1, 0);
+}
+
+export function* filter<T>(iterable: Iterable<T>, predicate:(item: T) => boolean): IterableIterator<T>{
+    for(const item of iterable){
+        if(predicate(item)){
+            yield item;
+        }
+    }
+}
+
+export function* map<T, U>(iterable: Iterable<T>, mapFunction:(item: T) => U): IterableIterator<U>{
+    for(const item of iterable){
+        yield mapFunction(item);
+    }
 }
 
 export class Queue<T>{
@@ -160,10 +199,6 @@ export class Queue<T>{
     constructor(initialContent: T[] = []){
         this.dequeueStore = Array.from(initialContent).reverse(); //copy
         this._size = this.dequeueStore.length;
-    }
-
-    [Symbol.iterator](): IterableIterator<T> {
-        throw new Error("Method not implemented.");
     }
 
     get size(): number{

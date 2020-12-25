@@ -47,14 +47,13 @@ class Day17 implements Day<Util.StructSet<Plane.Point>>{
 
     private executeStep(activePoints: Util.StructSet<Plane.Point>, neighboursFunction: (point: Plane.Point) => Plane.Point[]): void{
         const relevantPoints: Util.StructSet<Plane.Point> = this.relevantPoints(activePoints, neighboursFunction);
-        const changingPoints: Plane.Point[] = relevantPoints.toArray()
-            .filter((point: Plane.Point) => this.pointChanges(point, activePoints, neighboursFunction));
+        const changingPoints: IterableIterator<Plane.Point> = Util.filter(relevantPoints, (point: Plane.Point) => this.pointChanges(point, activePoints, neighboursFunction));
         this.changePointStates(changingPoints, activePoints);
     }
 
     private relevantPoints(activePoints: Util.StructSet<Plane.Point>, neighboursFunction: (point: Plane.Point) => Plane.Point[]): Util.StructSet<Plane.Point>{
         const points: Util.StructSet<Plane.Point> = new Util.StructSet<Plane.Point>();
-        for(let activePoint of activePoints.toArray()){
+        for(let activePoint of activePoints){
             points.add(activePoint);
             for(let neighbour of neighboursFunction(activePoint)){
                 points.add(neighbour);
@@ -79,7 +78,7 @@ class Day17 implements Day<Util.StructSet<Plane.Point>>{
             .length;
     }
 
-    private changePointStates(changingPoints: Plane.Point[], activePoints: Util.StructSet<Plane.Point>): void{
+    private changePointStates(changingPoints: Iterable<Plane.Point>, activePoints: Util.StructSet<Plane.Point>): void{
         for(let changingPoint of changingPoints){
             if(activePoints.has(changingPoint)){
                 activePoints.delete(changingPoint);

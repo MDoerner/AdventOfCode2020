@@ -311,7 +311,7 @@ class Day20 implements Day<[Map<number,Tile>, SeeMonsterMask]>{
     }
 
     private monsterMaskMatches(basePoint: Point, mask: SeeMonsterMask, orientation: Orientation, height: number, width: number, imagePixels: boolean[][]): boolean{
-        for(let offset of mask.monsterPoints.toArray()){
+        for(let offset of mask.monsterPoints){
             const point: Point = reorientedCoordinantes(add(basePoint, offset), orientation, imagePixels[0].length, imagePixels.length);
             if(!imagePixels[point.y][point.x]){
                 return false;
@@ -321,7 +321,7 @@ class Day20 implements Day<[Map<number,Tile>, SeeMonsterMask]>{
     }
 
     private addPoints(basePoint: Point, mask: SeeMonsterMask, orientation: Orientation, height: number, width: number, monsterPoints: Util.StructSet<Point>): void{
-        for(let offset of mask.monsterPoints.toArray()){
+        for(let offset of mask.monsterPoints){
             const point: Point = reorientedCoordinantes(add(basePoint, offset), orientation, width, height);
             monsterPoints.add(point);
         }

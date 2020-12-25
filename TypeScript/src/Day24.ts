@@ -1,4 +1,5 @@
 import Day from "./Day";
+import { GameOfLife } from "./GameOfLife";
 import { add, Point, Vector } from "./Plane";
 import * as Util from "./Util";
 
@@ -43,8 +44,8 @@ function hexNeighbours(point: Point): Point[]{
     return hexDirections.map((hexDirection: HexagonalDirection) => add(point, offsetFromHexDirection(hexDirection)));
 }
 
-function endPoint(startPoint: Point, hexPath: HexagonalDirection[]): Point{
-    return hexPath.reduce((currentPoint: Point, nextDirection: HexagonalDirection) => add(currentPoint, offsetFromHexDirection(nextDirection)), startPoint);
+function endPoint(startPoint: Point, hexPath: Iterable<HexagonalDirection>): Point{
+    return Util.reduce(hexPath, (currentPoint: Point, nextDirection: HexagonalDirection) => add(currentPoint, offsetFromHexDirection(nextDirection)), startPoint);
 }
 
 class Day24 implements Day<HexagonalDirection[][]>{
@@ -83,16 +84,27 @@ class Day24 implements Day<HexagonalDirection[][]>{
     }
 
     solvePart1(hexPaths: HexagonalDirection[][]): string {
-        const flipCounts: Util.StructMap<Point,number> = new Util.StructMap<Point,number>();
         const origin: Point = {x: 0, y: 0};
+        const blackTiles: Iterable<Point> = this.blackTiles(origin, hexPaths);
+        const result: number = Util.count(blackTiles);
+        return result.toString();
+    }
+
+    private blackTiles(origin: Point, hexPaths: Iterable<Iterable<HexagonalDirection>>): Iterable<Point>{
+        const flipCounts: Util.StructMap<Point,number> = this.flipCounts(origin, hexPaths);
+        return Util.map(
+                Util.filter(flipCounts, ([, flipCount]: [Point, number]) => flipCount % 2 == 1),
+                ([tile, ]: [Point, number]) => tile
+        );
+    }
+
+    private flipCounts(origin: Point, hexPaths: Iterable<Iterable<HexagonalDirection>>): Util.StructMap<Point,number>{
+        const flipCounts: Util.StructMap<Point,number> = new Util.StructMap<Point,number>();
         for(let hexPath of hexPaths){
             const tile: Point = endPoint(origin, hexPath);
             this.addOrIncrement(tile, flipCounts);
         }
-        const result: number = flipCounts.toArray()
-            .filter((pointFlipCountPair: [Point, number]) => pointFlipCountPair[1] % 2 == 1)
-            .length;
-        return result.toString();
+        return flipCounts;
     }
 
     private addOrIncrement(point: Point, countMap: Util.StructMap<Point,number>): void{
@@ -105,9 +117,29 @@ class Day24 implements Day<HexagonalDirection[][]>{
     }
 
     solvePart2(hexPaths: HexagonalDirection[][]): string {
-        throw new Error("Method not implemented.");
+        const origin: Point = {x: 0, y: 0};
+        const initiallyBlackTiles: Iterable<Point> = this.blackTiles(origin, hexPaths);
+        const gameOfLife = new HexGameOfLife();
+        const blackTiles: Iterable<Point> = gameOfLife.activeItemsAfterPlaying(initiallyBlackTiles, 100);
+        const result: number = Util.count(blackTiles);
+        return result.toString();
     }
 
+}
+
+class HexGameOfLife extends GameOfLife<Point>{
+    neighbours(point: Point): Iterable<Point> {
+        return hexNeighbours(point);
+    }
+
+    flipActive(activeNeighbourCount: number): boolean {
+        return activeNeighbourCount <= 0
+            || activeNeighbourCount > 2;
+    }
+
+    flipInactive(activeNeighbourCount: number): boolean {
+        return activeNeighbourCount == 2;
+    }
 }
 
 
