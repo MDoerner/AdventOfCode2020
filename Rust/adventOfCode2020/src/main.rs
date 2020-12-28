@@ -1,4 +1,8 @@
 mod day;
+mod plane;
+mod grid;
+mod util;
+mod algebra;
 
 extern crate regex;
 

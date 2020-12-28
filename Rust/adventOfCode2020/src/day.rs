@@ -1,5 +1,6 @@
 mod day1;
 mod day2;
+mod day3;
 
 pub trait DaySolver{
     fn solve_part1(&self, input: String) -> String;
@@ -27,6 +28,7 @@ pub fn get_day(&day: &i32) -> Option<Box<dyn DaySolver>>{
     match day{
         1 => Some(Box::new(day1::Day1 {})),
         2 => Some(Box::new(day2::Day2 {})),
+        3 => Some(Box::new(day3::Day3 {})),
         _ => None
     }
 }
