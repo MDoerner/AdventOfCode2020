@@ -184,7 +184,7 @@ impl<T: num::Integer + Neg<Output = T>> Vector2d<T>{
                 x: self.y,
                 y: -self.x,
             },
-            _ => self, //This cannot happen because of how modulo works.
+            _ => unreachable!(), //This cannot happen because of how modulo works.
         }
     }
 }
