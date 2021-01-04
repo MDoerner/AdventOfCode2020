@@ -4,7 +4,8 @@ impl super::Day for Day1{
     type PuzzleInput = Vec<i32>;
     fn parse_input(&self, input: String) -> Vec<i32> {
         input.lines()
-            .flat_map(|line| line.parse::<i32>())
+            .map(|line| line.parse::<i32>())
+            .filter_map(Result::ok)
             .collect::<Vec<i32>>()
     }
 
