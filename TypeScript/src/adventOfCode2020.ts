@@ -80,8 +80,10 @@ class AdventOfCodeRunner{
     adventOfCode2020(){
         let config = puzzleConfig(process.argv);
         if(config){
+            console.time("runtime");
             let output = puzzleOutput(config);
             console.log(output);
+            console.timeEnd("runtime");
         }
     }
 }

@@ -8,16 +8,20 @@ extern crate regex;
 
 use std::{path::Path, path::PathBuf, env};
 use std::fs;
+use std::time;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let maybe_config: Option<PuzzleConfiguration> = puzzle_config(args);
+    let start_time = time::Instant::now();
     let output: String;
     match maybe_config{
         None => return,
         Some(config) => output = puzzle_output(config),
     };
     println!("{}", output);
+    let runtime = start_time.elapsed();
+    println!("{:?}", runtime);
 }
 
 struct PuzzleConfiguration {

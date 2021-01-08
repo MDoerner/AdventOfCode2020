@@ -32,7 +32,7 @@ impl super::Day for Day2{
 }
 
 fn parse_password_data(line: &str) -> Option<(String, PasswordRule)>{
-    let re = Regex::new(r"(\d+)-(\d+) (\w): (.+)").unwrap();
+    let re = Regex::new(r"^(\d+)-(\d+) (\w): (.+)$").unwrap();
     let captures: regex::Captures;
     match re.captures(line){
         Some(cap) => captures = cap,
@@ -61,7 +61,7 @@ fn parse_password_data(line: &str) -> Option<(String, PasswordRule)>{
 
 fn is_valid_sled_password(password: &str, rule: &PasswordRule)-> bool {
     let character_count = occurrence_count(password, &rule.character);
-    return character_count >= rule.min_number 
+    return character_count >= rule.min_number
         && character_count <= rule.max_number
 }
 
