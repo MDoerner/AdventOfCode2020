@@ -1,8 +1,10 @@
 mod day;
 mod plane;
-mod grid;
+mod grid2d;
 mod util;
 mod algebra;
+mod space;
+mod grid;
 
 extern crate regex;
 
@@ -52,7 +54,7 @@ fn puzzle_config(args: Vec<String>) -> Option<PuzzleConfiguration>{
             return None;
     }
 
-    return Some(PuzzleConfiguration {day: day, part: part});
+    Some(PuzzleConfiguration {day, part})
 }
 
 fn puzzle_output(config: PuzzleConfiguration) -> String{
@@ -69,17 +71,17 @@ fn puzzle_output(config: PuzzleConfiguration) -> String{
     }
 
     match config.part{
-        1 => return (*solver).solve_part1(input),
-        2 => return (*solver).solve_part2(input),
-        _ => return String::from("")
+        1 => (*solver).solve_part1(input),
+        2 => (*solver).solve_part2(input),
+        _ => String::from("")
     }
 }
 
 fn puzzle_input(config: &PuzzleConfiguration) -> Option<String>{
     let path: PathBuf = puzzle_file_path(&config);
     match fs::read_to_string(path){
-        Err(_) => return None,
-        Ok(text) => return Some(text)
+        Err(_) => None,
+        Ok(text) => Some(text)
     }
 }
 
@@ -91,10 +93,10 @@ fn puzzle_file_path(config: &PuzzleConfiguration) -> PathBuf{
                             .to_path_buf();
     path.push("Input");
     path.push(filename);
-    return path;
+    path
 }
 
 fn puzzle_file_name(config: &PuzzleConfiguration) -> String{
     let day: &str = &config.day.to_string();
-    return ["Day", day, ".txt"].join("");
+    ["Day", day, ".txt"].join("")
 }

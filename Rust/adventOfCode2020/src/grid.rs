@@ -1,127 +1,114 @@
-use num;
-use crate::plane::Point2d;
+use crate::space::Point;
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::ops::Rem;
 use crate::util;
 
-pub trait Grid2d<T>{
+pub trait Grid<T, const N: usize>{
     type CoordinateType;
-    fn height(&self) -> Self::CoordinateType;
-    fn width(&self) -> Self::CoordinateType;
-    fn at_point<'a>(&'a self, point: &Point2d<Self::CoordinateType>) -> &'a T
-        where <Self as Grid2d<T>>::CoordinateType: num::Num;
+    fn width(&self) -> &[Self::CoordinateType; N];
+    fn at_point<'a>(&'a self, point: &Point<Self::CoordinateType, N>) -> &'a T
+        where <Self as Grid<T, N>>::CoordinateType: num::Num;
 }
 
-pub trait MutGrid2d<T>: Grid2d<T>{
-    fn set_point(&mut self, point: Point2d<Self::CoordinateType>, value: T) -> ()
-        where <Self as Grid2d<T>>::CoordinateType: num::Num;
+pub trait MutGrid<T, const N: usize>: Grid<T, N>{
+    fn set_point(&mut self, point: &Point<Self::CoordinateType, N>, value: T)
+        where <Self as Grid<T, N>>::CoordinateType: num::Num;
 }
 
-pub struct LoopingGrid<T, V> where T: num::Num, V:PartialEq{
-    height: T,
-    width: T,
-    map: HashMap<Point2d<T>,V>,
+pub struct LoopingGrid<T, V, const N: usize> where T: num::Num, V:PartialEq{
+    width: [T; N],
+    map: HashMap<Point<T, N>,V>,
     default: V,
 }
 
-fn main_grid_point<T: num::Num + num::Zero + Rem + PartialOrd + Copy>(point: &Point2d<T>, height: T, width: T) -> Point2d<T>{
-    Point2d{
-        x: util::modulo(point.x, width),
-        y: util::modulo(point.y, height),
+fn main_grid_point<T: num::Num + num::Zero + Rem + PartialOrd + Copy, const N: usize>(point: &Point<T, N>, width: &[T; N]) -> Point<T, N>{
+    let mut arr = [T::zero(); N];
+    for ind in 0..N{
+        arr[ind] = util::modulo(point[ind], width[ind]);
     }
+    Point::new(arr)
 }
 
-impl<T: num::Num + Hash + Eq + num::Zero + Rem + PartialOrd + Copy, V: PartialEq> LoopingGrid<T, V>{
-    pub fn new(height: T, width: T, default: V, non_default_values: impl Iterator<Item = (Point2d<T>,V)>) -> LoopingGrid<T, V>{
-        let mut map: HashMap<Point2d<T>, V> = HashMap::new();
+impl<T: num::Num + Hash + Eq + num::Zero + Rem + PartialOrd + Copy, V: PartialEq, const N: usize> LoopingGrid<T, V, N>{
+    pub fn new(width: [T; N], default: V, non_default_values: impl Iterator<Item = (Point<T, N>,V)>) -> LoopingGrid<T, V, N>{
+        let mut map: HashMap<Point<T, N>, V> = HashMap::new();
         for (point, value) in non_default_values{
             if value != default {
-                map.insert(main_grid_point(&point, height, width), value);
+                map.insert(main_grid_point(&point, &width), value);
             }
         }
-        LoopingGrid{
-            height: height,
-            width: width,
-            map: map,
-            default: default,
-        }
+        LoopingGrid{width, map, default}
     }
 }
 
-impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> Grid2d<V> for LoopingGrid<T, V>{
+impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq, const N: usize> Grid<V, N> for LoopingGrid<T, V, N>{
     type CoordinateType = T;
 
-    fn height(&self) -> Self::CoordinateType { self.height }
-    fn width(&self) -> Self::CoordinateType { self.width }
+    fn width(&self) -> &[Self::CoordinateType; N] { &self.width }
 
-    fn at_point<>(&self, point: &Point2d<Self::CoordinateType>) -> &V {
-        match self.map.get(&main_grid_point(point, self.height, self.width)){
+    fn at_point<>(&self, point: &Point<Self::CoordinateType, N>) -> &V {
+        match self.map.get(&main_grid_point(point, self.width())){
             Some(value) => value,
             None => &self.default,
         }
     }
 }
 
-impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> MutGrid2d<V> for LoopingGrid<T, V>{
-    fn set_point<>(&mut self, point: Point2d<T>, value: V) -> (){
-        let reference_point = main_grid_point(&point, self.height, self.width);
+impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq, const N: usize> MutGrid<V, N> for LoopingGrid<T, V, N>{
+    fn set_point<>(&mut self, point: &Point<T, N>, value: V){
+        let reference_point = main_grid_point(point, self.width());
         if value != self.default{
             self.map.insert(reference_point, value);
-        }else{
-            if self.map.contains_key(&reference_point){
-                self.map.remove(&reference_point);
-            }
+        }else if self.map.contains_key(&reference_point){
+            self.map.remove(&reference_point);
         }
     }
 }
 
-impl<T: num::Num + Hash + Eq, V: PartialEq> IntoIterator for LoopingGrid<T, V>{
-    type Item = (Point2d<T>, V);
-    type IntoIter = std::collections::hash_map::IntoIter<Point2d<T>, V>;
+impl<T: num::Num + Hash + Eq, V: PartialEq, const N: usize> IntoIterator for LoopingGrid<T, V, N>{
+    type Item = (Point<T, N>, V);
+    type IntoIter = std::collections::hash_map::IntoIter<Point<T, N>, V>;
 
     fn into_iter(self) -> Self::IntoIter{
         self.map.into_iter()
     }
 }
 
-pub struct OutsideDefaultGrid<T, V> where T: num::Num, V:PartialEq{
-    height: T,
-    width: T,
-    map: HashMap<Point2d<T>,V>,
+pub struct OutsideDefaultGrid<T, V, const N: usize> where T: num::Num, V:PartialEq{
+    width: [T; N],
+    map: HashMap<Point<T, N>,V>,
     default: V,
 }
 
-fn is_on_main_grid<T: num::Num + num::Zero + PartialOrd + Copy>(point: &Point2d<T>, height: T, width: T) -> bool{
-    T::zero() <= point.x && point.x < width
-        && T::zero() <= point.y && point.y < height
+fn is_on_main_grid<T: num::Num + num::Zero + PartialOrd + Copy, const N: usize>(point: &Point<T, N>, width: &[T; N]) -> bool{
+    for ind in 0..N{
+        if T::zero() >= point[ind] || point[ind] > width[ind]{
+            return  false;
+        }
+    }
+    true
 }
 
-impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> OutsideDefaultGrid<T, V>{
-    pub fn new(height: T, width: T, default: V, non_default_values: impl Iterator<Item = (Point2d<T>,V)>) -> LoopingGrid<T, V>{
-        let mut map: HashMap<Point2d<T>, V> = HashMap::new();
+impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq, const N: usize> OutsideDefaultGrid<T, V, N>{
+    pub fn new(width: [T;N], default: V, non_default_values: impl Iterator<Item = (Point<T, N>,V)>) -> OutsideDefaultGrid<T, V, N>{
+        let mut map: HashMap<Point<T, N>, V> = HashMap::new();
         for (point, value) in non_default_values{
-            if value != default && is_on_main_grid(&point, height, width) {
+            if value != default && is_on_main_grid(&point, &width) {
                 map.insert(point, value);
             }
         }
-        LoopingGrid{
-            height: height,
-            width: width,
-            map: map,
-            default: default,
-        }
+        OutsideDefaultGrid{width, map, default}
     }
 }
 
-impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> Grid2d<V> for OutsideDefaultGrid<T, V>{
+impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq, const N: usize> Grid<V, N> for OutsideDefaultGrid<T, V, N>{
     type CoordinateType = T;
 
-    fn height(&self) -> Self::CoordinateType { self.height }
-    fn width(&self) -> Self::CoordinateType { self.width }
+    fn width(&self) -> &[Self::CoordinateType; N] { &self.width }
 
-    fn at_point<>(&self, point: &Point2d<Self::CoordinateType>) -> &V {
-        if !is_on_main_grid(point, self.height, self.width){
+    fn at_point<>(&self, point: &Point<Self::CoordinateType, N>) -> &V {
+        if !is_on_main_grid(point, self.width()){
             return &self.default;
         }
         match self.map.get(point){
@@ -131,24 +118,22 @@ impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> Grid2d<V> for Ou
     }
 }
 
-impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> MutGrid2d<V> for OutsideDefaultGrid<T, V>{
-    fn set_point<>(&mut self, point: Point2d<T>, value: V) -> (){
-        if !is_on_main_grid(&point, self.height, self.width){
+impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq, const N: usize> MutGrid<V, N> for OutsideDefaultGrid<T, V, N>{
+    fn set_point<>(&mut self, point: &Point<T, N>, value: V){
+        if !is_on_main_grid(point, self.width()){
             return;
         }
         if value != self.default{
-            self.map.insert(point, value);
-        }else{
-            if self.map.contains_key(&point){
-                self.map.remove(&point);
-            }
+            self.map.insert(point.to_owned(), value);
+        }else if self.map.contains_key(point){
+            self.map.remove(point);
         }
     }
 }
 
-impl<T: num::Num + Hash + Eq, V: PartialEq> IntoIterator for OutsideDefaultGrid<T, V>{
-    type Item = (Point2d<T>, V);
-    type IntoIter = std::collections::hash_map::IntoIter<Point2d<T>, V>;
+impl<T: num::Num + Hash + Eq, V: PartialEq, const N: usize> IntoIterator for OutsideDefaultGrid<T, V, N>{
+    type Item = (Point<T, N>, V);
+    type IntoIter = std::collections::hash_map::IntoIter<Point<T, N>, V>;
 
     fn into_iter(self) -> Self::IntoIter{
         self.map.into_iter()
