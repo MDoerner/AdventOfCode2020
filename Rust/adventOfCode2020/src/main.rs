@@ -1,6 +1,4 @@
 mod day;
-mod plane;
-mod grid2d;
 mod util;
 mod algebra;
 mod space;
