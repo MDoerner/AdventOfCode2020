@@ -1,11 +1,11 @@
-use crate::grid2d;
-use crate::plane;
+use crate::grid;
+use crate::space;
 
 
 pub struct Day3 {}
 
 impl super::Day for Day3{
-    type PuzzleInput = Option<grid2d::LoopingGrid<usize,bool>>;
+    type PuzzleInput = Option<grid::LoopingGrid<usize,bool,2>>;
 
     fn parse_input(&self, text: std::string::String) -> Self::PuzzleInput {
         let lines = text.lines().collect::<Vec<&str>>();
@@ -17,9 +17,9 @@ impl super::Day for Day3{
         let points_with_trees = lines.iter()
             .enumerate()
             .map(|(y, line)| (y, tree_indices(&line)))
-            .map(|(y, xs)| xs.into_iter().map(move |x| plane::Point2d{x, y}))
+            .map(|(y, xs)| xs.into_iter().map(move |x| space::Point::new([x,y])))
             .flatten();
-        let grid = grid2d::LoopingGrid::new(height, width, false, points_with_trees.map(|point| (point, true)));
+        let grid = grid::LoopingGrid::new([width, height], false, points_with_trees.map(|point| (point, true)));
         Some(grid)
     }
 
@@ -28,9 +28,9 @@ impl super::Day for Day3{
             return String::from("Invalid input!");
         }
         let slope = maybe_grid.unwrap();
-        let start_point = plane::Point2d {x: 0, y: 0};
-        let direction = plane::Vector2d {x: 3, y: 1};
-        let tree_count = trees_in_direction(start_point, direction, &slope);
+        let start_point = space::Point::new([0usize,0usize]);
+        let direction = space::Vector::new([3usize,1usize]);
+        let tree_count = trees_in_direction(start_point, &direction, &slope);
         tree_count.to_string()
     }
 
@@ -39,9 +39,9 @@ impl super::Day for Day3{
             return String::from("Invalid input!");
         }
         let slope = maybe_grid.unwrap();
-        let start_point = plane::Point2d {x: 0, y: 0};
-        let directions: Vec<plane::Vector2d<usize>>= vec![plane::Vector2d {x: 1, y: 1}, plane::Vector2d {x: 3, y: 1}, plane::Vector2d {x: 5, y: 1}, plane::Vector2d {x: 7, y: 1}, plane::Vector2d {x: 1, y: 2}];
-        let tree_counts = directions.into_iter().map(|direction| trees_in_direction(start_point, direction, &slope));
+        let start_point = space::Point::new([0usize, 0usize]);
+        let directions = [space::Vector::new([1usize, 1usize]), space::Vector::new([3usize, 1usize]), space::Vector::new([5usize, 1usize]), space::Vector::new([7usize, 1usize]), space::Vector::new([1usize, 2usize])];
+        let tree_counts = directions.iter().map(|direction| trees_in_direction(start_point, direction, &slope));
         let result: usize = tree_counts.product();
         result.to_string()
     }
@@ -59,18 +59,18 @@ fn is_tree(c: &char) -> bool{
     c == &'#'
 }
 
-fn trees_in_direction(start_point: plane::Point2d<usize>, direction: plane::Vector2d<usize>, slope: &impl grid2d::Grid2d<bool, CoordinateType=usize>) -> usize{
+fn trees_in_direction(start_point: space::Point<usize, 2>, direction: &space::Vector<usize, 2>, slope: &impl grid::Grid<bool, 2, CoordinateType=usize>) -> usize{
     let normalized_direction = direction.to_direction();
     trees_with_step(start_point, normalized_direction, slope)
 }
 
-fn trees_with_step(start_point: plane::Point2d<usize>, step: plane::Vector2d<usize>, slope: &impl grid2d::Grid2d<bool, CoordinateType=usize>) -> usize{
-    if step.y == 0{
+fn trees_with_step(start_point: space::Point<usize, 2>, step: space::Vector<usize, 2>, slope: &impl grid::Grid<bool, 2, CoordinateType=usize>) -> usize{
+    if step[1] == 0{
         return 0;
     }
     let mut current_point = start_point;
     let mut trees_encountered = 0;
-    while current_point.y < slope.height(){
+    while current_point[1] < slope.width()[1]{
         if *slope.at_point(&current_point){
             trees_encountered += 1;
         }
