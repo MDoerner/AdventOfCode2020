@@ -13,7 +13,7 @@ pub trait Grid2d<T>{
 }
 
 pub trait MutGrid2d<T>: Grid2d<T>{
-    fn set_point(&mut self, point: Point2d<Self::CoordinateType>, value: T) -> ()
+    fn set_point(&mut self, point: Point2d<Self::CoordinateType>, value: T)
         where <Self as Grid2d<T>>::CoordinateType: num::Num;
 }
 
@@ -40,10 +40,10 @@ impl<T: num::Num + Hash + Eq + num::Zero + Rem + PartialOrd + Copy, V: PartialEq
             }
         }
         LoopingGrid{
-            height: height,
-            width: width,
-            map: map,
-            default: default,
+            height,
+            width,
+            map,
+            default,
         }
     }
 }
@@ -63,14 +63,12 @@ impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> Grid2d<V> for Lo
 }
 
 impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> MutGrid2d<V> for LoopingGrid<T, V>{
-    fn set_point<>(&mut self, point: Point2d<T>, value: V) -> (){
+    fn set_point<>(&mut self, point: Point2d<T>, value: V){
         let reference_point = main_grid_point(&point, self.height, self.width);
         if value != self.default{
             self.map.insert(reference_point, value);
-        }else{
-            if self.map.contains_key(&reference_point){
-                self.map.remove(&reference_point);
-            }
+        }else if self.map.contains_key(&reference_point){
+            self.map.remove(&reference_point);
         }
     }
 }
@@ -105,10 +103,10 @@ impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> OutsideDefaultGr
             }
         }
         OutsideDefaultGrid{
-            height: height,
-            width: width,
-            map: map,
-            default: default,
+            height,
+            width,
+            map,
+            default,
         }
     }
 }
@@ -131,16 +129,14 @@ impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> Grid2d<V> for Ou
 }
 
 impl<T: num::Num + Hash + Eq + PartialOrd + Copy, V: PartialEq> MutGrid2d<V> for OutsideDefaultGrid<T, V>{
-    fn set_point<>(&mut self, point: Point2d<T>, value: V) -> (){
+    fn set_point<>(&mut self, point: Point2d<T>, value: V){
         if !is_on_main_grid(&point, self.height, self.width){
             return;
         }
         if value != self.default{
             self.map.insert(point, value);
-        }else{
-            if self.map.contains_key(&point){
-                self.map.remove(&point);
-            }
+        }else if self.map.contains_key(&point){
+            self.map.remove(&point);
         }
     }
 }

@@ -1,4 +1,3 @@
-use regex;
 
 #[derive(Eq, PartialEq, Hash, Debug)]
 pub struct TravelDocument{
@@ -47,8 +46,8 @@ fn parse_document(text: &str) -> TravelDocument{
         .flatten()
         .map(|item| item.split(':').collect::<Vec<&str>>())
         .filter(|item_elements| item_elements.len() == 2)
-        .map(|item_elements| match &item_elements[..]{
-                &[item_type, item_value, ..] => (item_type, item_value),
+        .map(|item_elements| match item_elements[..]{
+                [item_type, item_value, ..] => (item_type, item_value),
                 _ => unreachable!(),
             });
     document_from_item_texts(document_items)
@@ -79,14 +78,14 @@ fn document_from_item_texts<'a>(items_on_document: impl IntoIterator<Item=(&'a s
     }
 
     TravelDocument {
-        birth_year: birth_year,
-        issue_year: issue_year,
-        expiration_year: expiration_year,
-        height: height,
-        hair_colour: hair_colour,
-        eye_colour: eye_colour,
-        passport_id: passport_id,
-        country_id: country_id,
+        birth_year,
+        issue_year,
+        expiration_year,
+        height,
+        hair_colour,
+        eye_colour,
+        passport_id,
+        country_id,
     }
 }
 
@@ -148,8 +147,8 @@ fn is_valid_height(text: &str) -> bool{
         Err(_) => return false,
     }
     match captures.name("unit").unwrap().as_str(){
-        "cm" => 150 <= height_value && height_value <= 193,
-        "in" => 59 <= height_value && height_value <= 76,
+        "cm" => (150..=193).contains(&height_value),
+        "in" => (59..=76).contains(&height_value),
         _ => false,
     }
 }
@@ -159,7 +158,7 @@ fn is_valid_hair_color(text: &str) -> bool{
     hair_color_regex.is_match(text)
 }
 
-const VALID_EYE_COLORS: &'static [&'static str] = &["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+const VALID_EYE_COLORS: &[&str] = &["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
 fn is_valid_eye_color(text: &str) -> bool{
     VALID_EYE_COLORS.iter()
         .any(|&item| item == text)

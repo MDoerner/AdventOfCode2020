@@ -1,4 +1,3 @@
-use num;
 use std::ops::Add;
 use std::ops::Mul;
 use std::ops::Sub;
@@ -221,7 +220,7 @@ impl<T: num::One + num::Zero + num::Num + Neg<Output = T> + Copy> Point2d<T>{
 
 pub fn neighbour_offsets<T: num::One + num::Zero + num::Num + Neg<Output = T> + Copy>() -> Vec<Vector2d<T>>{
     let mut offsets: Vec<Vector2d<T>> = vec![];
-    for x in [T::one(), T::zero(), (T::one())].iter(){
+    for x in [T::one(), T::zero(), -(T::one())].iter(){
         for y in [T::one(), T::zero(), -(T::one())].iter(){
             if x != &T::zero() || y != &T::zero(){
                 let offset: Vector2d<T> = Vector2d { x: *x, y: *y};

@@ -20,14 +20,14 @@ impl super::Day for Day2{
         let number_of_valid_passwords = input.iter()
             .filter(|(password, rule)| is_valid_sled_password(password, rule))
             .count();
-        return number_of_valid_passwords.to_string();
+        number_of_valid_passwords.to_string()
     }
 
     fn solve_part2(&self, input: Self::PuzzleInput) -> std::string::String {
         let number_of_valid_passwords = input.iter()
             .filter(|(password, rule)| is_valid_toboggan_password(password, rule))
             .count();
-    return number_of_valid_passwords.to_string();
+        number_of_valid_passwords.to_string()
     }
 }
 
@@ -54,14 +54,14 @@ fn parse_password_data(line: &str) -> Option<(String, PasswordRule)>{
         Ok(n) => max_number = n,
         Err(_) => return None
     }
-    let rule = PasswordRule {character: character, min_number: min_number, max_number: max_number};
+    let rule = PasswordRule {character, min_number, max_number};
 
-    return Some((password, rule));
+    Some((password, rule))
 }
 
 fn is_valid_sled_password(password: &str, rule: &PasswordRule)-> bool {
     let character_count = occurrence_count(password, &rule.character);
-    return character_count >= rule.min_number
+    character_count >= rule.min_number
         && character_count <= rule.max_number
 }
 
@@ -71,8 +71,8 @@ fn occurrence_count(text: &str, character: &char) -> usize{
 
 fn is_valid_toboggan_password(password: &str, rule: &PasswordRule)-> bool {
     let password_characters = password.chars().collect::<Vec<char>>();
-    return password_characters[rule.min_number - 1] == rule.character
+    password_characters[rule.min_number - 1] == rule.character
             && password_characters[rule.max_number - 1] != rule.character
         || password_characters[rule.max_number - 1] == rule.character
-            && password_characters[rule.min_number - 1] != rule.character;
+            && password_characters[rule.min_number - 1] != rule.character
 }

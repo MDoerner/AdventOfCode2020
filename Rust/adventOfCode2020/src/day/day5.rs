@@ -35,7 +35,7 @@ fn parse_boarding_card(text: &str) -> Result<Seat, std::num::ParseIntError>{
     let (row_text, column_text) = text.split_at(7);
     let row = parse_seat_row(row_text)?;
     let column = parse_seat_column(column_text)?;
-    Ok(Seat {row: row, column: column})
+    Ok(Seat {row, column})
 }
 
 fn parse_seat_row(text: &str) -> Result<u16, std::num::ParseIntError>{
@@ -54,15 +54,15 @@ impl Seat {
     }
 }
 
-fn first_free_seat_id(seats: &Vec<Seat>) -> u32{
+fn first_free_seat_id(seats: &[Seat]) -> u32{
     let mut seat_ids: Vec<u32> = seats.iter()
     .map(|seat| seat.seat_id())
     .collect();
-    seat_ids.sort();
+    seat_ids.sort_unstable();
     first_missing_seat_id(&seat_ids)
 }
 
-fn first_missing_seat_id(seat_ids: &Vec<u32>) -> u32{
+fn first_missing_seat_id(seat_ids: &[u32]) -> u32{
     let mut seat_index: usize = 0;
     while seat_index + 1 < seat_ids.len()
         && seat_ids[seat_index] == seat_ids[seat_index + 1] - 1{
