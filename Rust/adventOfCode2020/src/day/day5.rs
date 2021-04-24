@@ -70,3 +70,28 @@ fn first_missing_seat_id(seat_ids: &[u32]) -> u32{
     }
     seat_ids[seat_index] + 1
 }
+
+#[cfg(test)]
+mod day5_tests {
+    use super::*;
+    use crate::input;
+    use crate::day;
+
+    #[test]
+    fn correct_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day5{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 5, part: 1}).unwrap();
+        let expected_result = String::from("930");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn correct_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day5{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 5, part: 2}).unwrap();
+        let expected_result = String::from("515");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+}

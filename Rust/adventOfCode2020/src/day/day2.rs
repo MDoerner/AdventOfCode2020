@@ -32,9 +32,11 @@ impl super::Day for Day2{
 }
 
 fn parse_password_data(line: &str) -> Option<(String, PasswordRule)>{
-    let re = Regex::new(r"^(\d+)-(\d+) (\w): (.+)$").unwrap();
+    lazy_static! {
+        static ref PASSWORD_RE: Regex = Regex::new(r"^(\d+)-(\d+) (\w): (.+)$").unwrap();
+    }
     let captures: regex::Captures;
-    match re.captures(line){
+    match PASSWORD_RE.captures(line){
         Some(cap) => captures = cap,
         None => return None
     }
@@ -75,4 +77,29 @@ fn is_valid_toboggan_password(password: &str, rule: &PasswordRule)-> bool {
             && password_characters[rule.max_number - 1] != rule.character
         || password_characters[rule.max_number - 1] == rule.character
             && password_characters[rule.min_number - 1] != rule.character
+}
+
+#[cfg(test)]
+mod day2_tests {
+    use super::*;
+    use crate::input;
+    use crate::day;
+
+    #[test]
+    fn correct_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day2{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 2, part: 1}).unwrap();
+        let expected_result = String::from("500");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn correct_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day2{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 2, part: 2}).unwrap();
+        let expected_result = String::from("313");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
 }

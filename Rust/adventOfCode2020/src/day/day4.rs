@@ -1,3 +1,5 @@
+use regex::Regex;
+
 
 #[derive(Eq, PartialEq, Hash, Debug)]
 pub struct TravelDocument{
@@ -115,8 +117,10 @@ fn is_valid_birth_year(text: &str) -> bool{
 }
 
 fn is_valid_year(text: &str, min_year: u16, max_year: u16) -> bool{
-    let year_regex = regex::Regex::new(r"^\d{4}$").unwrap();
-    if !year_regex.is_match(text){
+    lazy_static! {
+        static ref YEAR_RE: Regex = Regex::new(r"^\d{4}$").unwrap();
+    }
+    if !YEAR_RE.is_match(text){
         return false;
     }
     let parsed_year = text.parse::<u16>();
@@ -135,9 +139,11 @@ fn is_valid_expiration_year(text: &str) -> bool{
 }
 
 fn is_valid_height(text: &str) -> bool{
-    let height_regex = regex::Regex::new(r"^(?P<value>\d+)(?P<unit>in|cm)$").unwrap();
+    lazy_static! {
+        static ref HEIGHT_RE: Regex = Regex::new(r"^(?P<value>\d+)(?P<unit>in|cm)$").unwrap();
+    }
     let captures: regex::Captures;
-    match height_regex.captures(text){
+    match HEIGHT_RE.captures(text){
         Some(cap) => captures = cap,
         None => return false
     }
@@ -154,8 +160,10 @@ fn is_valid_height(text: &str) -> bool{
 }
 
 fn is_valid_hair_color(text: &str) -> bool{
-    let hair_color_regex = regex::Regex::new(r"^#[0-9a-f]{6}$").unwrap();
-    hair_color_regex.is_match(text)
+    lazy_static! {
+        static ref HAIR_COLOR_RE: Regex = Regex::new(r"^#[0-9a-f]{6}$").unwrap();
+    }
+    HAIR_COLOR_RE.is_match(text)
 }
 
 const VALID_EYE_COLORS: &[&str] = &["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
@@ -165,7 +173,34 @@ fn is_valid_eye_color(text: &str) -> bool{
 }
 
 fn is_valid_passport_id(text: &str) -> bool{
-    let passport_id_regex = regex::Regex::new(r"^\d{9}$").unwrap();
-    passport_id_regex.is_match(text)
+    lazy_static! {
+        static ref PASSPORT_ID_RE: Regex = Regex::new(r"^\d{9}$").unwrap();
+    }
+    PASSPORT_ID_RE.is_match(text)
+}
+
+#[cfg(test)]
+mod day4_tests {
+    use super::*;
+    use crate::input;
+    use crate::day;
+
+    #[test]
+    fn correct_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day4{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 4, part: 1}).unwrap();
+        let expected_result = String::from("182");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn correct_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day4{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 4, part: 2}).unwrap();
+        let expected_result = String::from("109");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
 }
 

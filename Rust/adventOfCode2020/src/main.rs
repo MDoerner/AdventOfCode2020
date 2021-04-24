@@ -1,14 +1,16 @@
 mod day;
+mod input;
 mod util;
 mod algebra;
 mod space;
 mod grid;
 
+#[macro_use] extern crate lazy_static;
 extern crate regex;
 
-use std::{path::Path, path::PathBuf, env};
-use std::fs;
+use std::env;
 use std::time;
+use input::PuzzleConfiguration;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -22,11 +24,6 @@ fn main() {
     println!("{}", output);
     let runtime = start_time.elapsed();
     println!("{:?}", runtime);
-}
-
-struct PuzzleConfiguration {
-    day: i32,
-    part: i32
 }
 
 fn puzzle_config(args: Vec<String>) -> Option<PuzzleConfiguration>{
@@ -63,7 +60,7 @@ fn puzzle_output(config: PuzzleConfiguration) -> String{
     };
 
     let input: String;
-    match puzzle_input(&config){
+    match input::puzzle_input(&config){
         Some(text) => input = text,
         None => return String::from("")
     }
@@ -73,28 +70,4 @@ fn puzzle_output(config: PuzzleConfiguration) -> String{
         2 => (*solver).solve_part2(input),
         _ => String::from("")
     }
-}
-
-fn puzzle_input(config: &PuzzleConfiguration) -> Option<String>{
-    let path: PathBuf = puzzle_file_path(&config);
-    match fs::read_to_string(path){
-        Err(_) => None,
-        Ok(text) => Some(text)
-    }
-}
-
-fn puzzle_file_path(config: &PuzzleConfiguration) -> PathBuf{
-    let filename = puzzle_file_name(&config);
-    let mut path: PathBuf = Path::new(env!("CARGO_MANIFEST_DIR"))
-                            .parent().unwrap()
-                            .parent().unwrap()
-                            .to_path_buf();
-    path.push("Input");
-    path.push(filename);
-    path
-}
-
-fn puzzle_file_name(config: &PuzzleConfiguration) -> String{
-    let day: &str = &config.day.to_string();
-    ["Day", day, ".txt"].join("")
 }

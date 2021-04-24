@@ -83,3 +83,27 @@ fn find_summing_triple_in_sorted(sorted_candidates: &[i32], desired_sum: i32) ->
     None
 }
 
+#[cfg(test)]
+mod day1_tests {
+    use super::*;
+    use crate::input;
+    use crate::day;
+
+    #[test]
+    fn correct_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day1{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 1, part: 1}).unwrap();
+        let expected_result = String::from("928896");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn correct_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day1{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 1, part: 2}).unwrap();
+        let expected_result = String::from("295668576");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+}

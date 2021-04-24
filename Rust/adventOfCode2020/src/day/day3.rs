@@ -78,3 +78,28 @@ fn trees_with_step(start_point: space::Point<usize, 2>, step: space::Vector<usiz
     }
     trees_encountered
 }
+
+#[cfg(test)]
+mod day3_tests {
+    use super::*;
+    use crate::input;
+    use crate::day;
+
+    #[test]
+    fn correct_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day3{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 3, part: 1}).unwrap();
+        let expected_result = String::from("209");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn correct_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day3{});
+        let problem_input = input::puzzle_input(&input::PuzzleConfiguration{day: 3, part: 2}).unwrap();
+        let expected_result = String::from("1574890240");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+}
