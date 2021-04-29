@@ -1,5 +1,5 @@
 
-
+#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
 pub struct Seat{
     row: u16,
     column: u16,
