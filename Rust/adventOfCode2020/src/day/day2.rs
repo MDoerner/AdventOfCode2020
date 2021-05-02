@@ -35,27 +35,11 @@ fn parse_password_data(line: &str) -> Option<(String, PasswordRule)>{
     lazy_static! {
         static ref PASSWORD_RE: Regex = Regex::new(r"^(\d+)-(\d+) (\w): (.+)$").unwrap();
     }
-    let captures: regex::Captures;
-    match PASSWORD_RE.captures(line){
-        Some(cap) => captures = cap,
-        None => return None
-    }
+    let captures = PASSWORD_RE.captures(line)?;
     let password = captures[4].to_owned();
-    let character: char;
-    let min_number: usize;
-    let max_number: usize;
-    match captures[3].chars().next(){
-        Some(c) => character = c,
-        None => return None
-    }
-    match captures[1].parse::<usize>(){
-        Ok(n) => min_number = n,
-        Err(_) => return None
-    }
-    match captures[2].parse::<usize>(){
-        Ok(n) => max_number = n,
-        Err(_) => return None
-    }
+    let character = captures[3].chars().next()?;
+    let min_number = captures[1].parse::<usize>().ok()?;
+    let max_number = captures[2].parse::<usize>().ok()?;
     let rule = PasswordRule {character, min_number, max_number};
 
     Some((password, rule))

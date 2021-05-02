@@ -72,12 +72,13 @@ fn unique_characters_with_count(strings:&[String]) -> HashMap<char, usize>{
     item_counts
 }
 
-fn increment_item_count(item_counts: &mut HashMap<char, usize>, item: char) -> (){
+fn increment_item_count(item_counts: &mut HashMap<char, usize>, item: char){
     let current_item_count = item_counts.get(&item);
-    match current_item_count {
-        Some(old_count) => item_counts.insert(item, old_count + 1),
-        None => item_counts.insert(item, 1),
+    let new_count = match current_item_count {
+        Some(old_count) => *old_count + 1,
+        None => 1,
     };
+    item_counts.insert(item, new_count);
 }
 
 
