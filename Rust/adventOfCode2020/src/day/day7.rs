@@ -161,6 +161,57 @@ mod day7_tests {
     use crate::input;
     use crate::day;
 
+    fn example_input() -> String{
+        String::from(
+"light red bags contain 1 bright white bag, 2 muted yellow bags.
+dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+bright white bags contain 1 shiny gold bag.
+muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
+shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
+dark olive bags contain 3 faded blue bags, 4 dotted black bags.
+vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
+faded blue bags contain no other bags.
+dotted black bags contain no other bags.")
+    }
+
+    fn example_input_2() -> String{
+        String::from(
+"shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.")
+    }
+
+    #[test]
+    fn example_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day7{});
+        let problem_input = example_input();
+        let expected_result = String::from("4");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn example_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day7{});
+        let problem_input = example_input();
+        let expected_result = String::from("32");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn example_2_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day7{});
+        let problem_input = example_input_2();
+        let expected_result = String::from("126");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
     #[test]
     fn correct_part1() {
         let day: Box<dyn day::DaySolver> = Box::new(Day7{});

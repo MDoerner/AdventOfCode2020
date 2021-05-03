@@ -8,6 +8,9 @@ mod grid;
 #[macro_use] extern crate lazy_static;
 extern crate regex;
 
+#[cfg(test)] extern crate rstest;
+
+
 use std::env;
 use std::time;
 use input::PuzzleConfiguration;

@@ -69,6 +69,31 @@ mod day2_tests {
     use crate::input;
     use crate::day;
 
+    fn example_input() -> String{
+        String::from(
+"1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc")
+    }
+
+    #[test]
+    fn example_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day2{});
+        let problem_input = example_input();
+        let expected_result = String::from("2");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn example_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day2{});
+        let problem_input = example_input();
+        let expected_result = String::from("1");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
     #[test]
     fn correct_part1() {
         let day: Box<dyn day::DaySolver> = Box::new(Day2{});

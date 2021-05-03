@@ -73,9 +73,38 @@ fn first_missing_seat_id(seat_ids: &[u32]) -> u32{
 
 #[cfg(test)]
 mod day5_tests {
+    use std::u16;
+
     use super::*;
     use crate::input;
     use crate::day;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case(String::from("BFFFBBFRRR"), 70)]
+    #[case(String::from("FFFBBBFRRR"), 14)]
+    #[case(String::from("BBFFBBFRLL"), 102)]
+    fn test_parse_row(#[case] boarding_pass: String, #[case] expected_row: u16) {
+        let seat = parse_boarding_card(&boarding_pass).unwrap();
+        assert_eq!(seat.row, expected_row);
+    }
+
+    #[rstest]
+    #[case(String::from("BFFFBBFRRR"), 7)]
+    #[case(String::from("FFFBBBFRRR"), 7)]
+    #[case(String::from("BBFFBBFRLL"), 4)]
+    fn test_parse_column(#[case] boarding_pass: String, #[case] expected_column: u16) {
+        let seat = parse_boarding_card(&boarding_pass).unwrap();
+        assert_eq!(seat.column, expected_column);
+    }
+
+    #[rstest]
+    #[case(Seat {row: 70, column: 7}, 567)]
+    #[case(Seat {row: 14, column: 7}, 119)]
+    #[case(Seat {row: 102, column: 4}, 820)]
+    fn test_seat_id(#[case] seat: Seat, #[case] expected_id: u32) {
+        assert_eq!(seat.seat_id(), expected_id);
+    }
 
     #[test]
     fn correct_part1() {

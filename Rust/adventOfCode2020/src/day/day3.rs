@@ -85,6 +85,39 @@ mod day3_tests {
     use crate::input;
     use crate::day;
 
+    fn example_input() -> String{
+        String::from(
+"..##.......
+#...#...#..
+.#....#..#.
+..#.#...#.#
+.#...##..#.
+..#.##.....
+.#.#.#....#
+.#........#
+#.##...#...
+#...##....#
+.#..#...#.#")
+    }
+
+    #[test]
+    fn example_part1() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day3{});
+        let problem_input = example_input();
+        let expected_result = String::from("7");
+        let actual_result = day.solve_part1(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
+    #[test]
+    fn example_part2() {
+        let day: Box<dyn day::DaySolver> = Box::new(Day3{});
+        let problem_input = example_input();
+        let expected_result = String::from("336");
+        let actual_result = day.solve_part2(problem_input);
+        assert_eq!(actual_result, expected_result);
+    }
+
     #[test]
     fn correct_part1() {
         let day: Box<dyn day::DaySolver> = Box::new(Day3{});
