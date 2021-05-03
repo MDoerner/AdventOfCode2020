@@ -5,6 +5,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 pub trait DaySolver{
     fn solve_part1(&self, input: String) -> String;
@@ -37,6 +38,7 @@ pub fn get_day(&day: &i32) -> Option<Box<dyn DaySolver>>{
         5 => Some(Box::new(day5::Day5 {})),
         6 => Some(Box::new(day6::Day6 {})),
         7 => Some(Box::new(day7::Day7 {})),
+        8 => Some(Box::new(day8::Day8 {})),
         _ => None
     }
 }
