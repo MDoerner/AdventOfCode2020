@@ -1,9 +1,4 @@
-use std::ops::Add;
-use std::ops::Mul;
-use std::ops::Sub;
-use std::ops::Neg;
-use std::ops::Div;
-use std::ops::Index;
+use std::ops::{Add,Mul,Sub,Neg,Div,Index};
 use std::convert::TryFrom;
 use std::num::TryFromIntError;
 use std::iter::IntoIterator;

@@ -1,3 +1,6 @@
+
+use std::ops::Add;
+
 pub struct Day1 {}
 
 impl super::Day for Day1{
@@ -6,11 +9,11 @@ impl super::Day for Day1{
         input.lines()
             .map(|line| line.parse::<i32>())
             .filter_map(Result::ok)
-            .collect::<Vec<i32>>()
+            .collect()
     }
 
     fn solve_part1(&self, input: Vec<i32>) -> String {
-        let summing_pair: Option<(i32, i32)> = find_summing_pair(input, 2020);
+        let summing_pair: Option<(i32, i32)> = find_summing_pair(&input, &2020);
         match summing_pair{
             Some((l,h)) => (l * h).to_string(),
             None => String::from("No matching pair found.")
@@ -26,36 +29,37 @@ impl super::Day for Day1{
     }
 }
 
-fn find_summing_pair(candidates: Vec<i32>, desired_sum: i32) -> Option<(i32, i32)>{
-    let mut sorted_numbers: Vec<i32> = candidates;
+pub fn find_summing_pair<T: num::Num + Add + Eq + PartialOrd + Ord + Copy>(candidates: &[T], desired_sum: &T) -> Option<(T, T)>{
+    let mut sorted_numbers: Vec<T> = candidates.iter()
+        .map(|item| item.to_owned())
+        .collect();
     sorted_numbers.sort_unstable();
     find_summing_pair_in_sorted(&sorted_numbers, desired_sum, 0)
 }
 
-pub fn find_summing_pair_in_sorted(sorted_candidates: &[i32], desired_sum: i32, lowest_index: usize) -> Option<(i32, i32)>{
+fn find_summing_pair_in_sorted<T: num::Num + Add + Eq + PartialOrd + Ord + Copy>(sorted_candidates: &[T], desired_sum: &T, lowest_index: usize) -> Option<(T, T)>{
     if sorted_candidates.len() < 2 {
         return None;
     }
 
-    let mut lower_index: usize = lowest_index;
-    let mut higher_index: usize = sorted_candidates.len() - 1;
-    let mut current_lower_value: i32 = sorted_candidates[lower_index];
-    let mut current_higher_value: i32 = sorted_candidates[higher_index];
+    let mut lower_index = lowest_index;
+    let mut higher_index = sorted_candidates.len() - 1;
+    let mut current_lower_value = &sorted_candidates[lower_index];
+    let mut current_higher_value = &sorted_candidates[higher_index];
     while lower_index < higher_index{
-        let current_sum = current_lower_value + current_higher_value;
-        match current_sum.cmp(&desired_sum){
+        let current_sum = *current_lower_value + *current_higher_value;
+        match current_sum.cmp(desired_sum){
             std::cmp::Ordering::Greater => {
                 higher_index -= 1;
-                current_higher_value = sorted_candidates[higher_index];
+                current_higher_value = &sorted_candidates[higher_index];
             },
             std::cmp::Ordering::Less => {
                 lower_index += 1;
-                current_lower_value = sorted_candidates[lower_index];
+                current_lower_value = &sorted_candidates[lower_index];
             },
-            std::cmp::Ordering::Equal => return Some((current_lower_value, current_higher_value)),
+            std::cmp::Ordering::Equal => return Some((current_lower_value.to_owned(), current_higher_value.to_owned())),
         }
     }
-
     None
 }
 
@@ -73,7 +77,7 @@ fn find_summing_triple_in_sorted(sorted_candidates: &[i32], desired_sum: i32) ->
     let mut lowest_index: usize = 0;
     while sorted_candidates.len() >= lowest_index + 2 {
         let lowest_value: i32 = sorted_candidates[lowest_index];
-        let other_values: Option<(i32, i32)> = find_summing_pair_in_sorted(sorted_candidates, desired_sum - lowest_value, lowest_index + 1);
+        let other_values: Option<(i32, i32)> = find_summing_pair_in_sorted(sorted_candidates, &(desired_sum - lowest_value), lowest_index + 1);
         match other_values {
             Some((mid_value, highest_value)) => return Some((lowest_value, mid_value, highest_value)),
             None => lowest_index += 1
