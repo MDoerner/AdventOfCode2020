@@ -6,28 +6,28 @@ use std::slice::Iter;
 use crate::util;
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
-pub struct Vector<T: num::Num, const N: usize>{
+pub struct Vector<T, const N: usize>{
     arr : [T; N],
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
-pub struct Point<T: num::Num, const N: usize>{
+pub struct Point<T, const N: usize>{
     arr : [T; N],
 }
 
-impl<T: num::Num, const N: usize> Vector<T, N>{
+impl<T, const N: usize> Vector<T, N>{
     pub fn new(arr: [T; N]) -> Vector<T, N>{
         Vector{arr}
     }
 }
 
-impl<T: num::Num, const N: usize> Point<T, N>{
+impl<T, const N: usize> Point<T, N>{
     pub fn new(arr: [T; N]) -> Point<T, N>{
         Point{arr}
     }
 }
 
-impl<T: num::Num, I, const N: usize>Index<I> for Vector<T, N> where [T]: Index<I>{
+impl<T, I, const N: usize>Index<I> for Vector<T, N> where [T]: Index<I>{
     type Output = <[T] as std::ops::Index<I>>::Output;
 
     fn index(&self, indx: I) -> &Self::Output{
@@ -35,7 +35,7 @@ impl<T: num::Num, I, const N: usize>Index<I> for Vector<T, N> where [T]: Index<I
     }
 }
 
-impl<T: num::Num, I, const N: usize>Index<I> for Point<T, N> where [T]: Index<I>{
+impl<T, I, const N: usize>Index<I> for Point<T, N> where [T]: Index<I>{
     type Output = <[T] as std::ops::Index<I>>::Output;
 
     fn index(&self, indx: I) -> &Self::Output{
@@ -43,12 +43,12 @@ impl<T: num::Num, I, const N: usize>Index<I> for Point<T, N> where [T]: Index<I>
     }
 }
 
-impl<T: Add<Output = T> + num::Num + num::Zero + Copy, const N: usize> Add for Vector<T, N> {
+impl<T: Add<Output = T> + Default + Copy, const N: usize> Add for Vector<T, N> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output{
         //Use array_zip and array_map when they stabelize.
-        let mut arr = [T::zero(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = self[ind] + other[ind]
         }
@@ -56,12 +56,12 @@ impl<T: Add<Output = T> + num::Num + num::Zero + Copy, const N: usize> Add for V
     }
 }
 
-impl<T: Add<Output = T> + num::Num + num::Zero + Copy, const N: usize> Add<Vector<T,N>> for Point<T,N> {
+impl<T: Add<Output = T> + Default + Copy, const N: usize> Add<Vector<T,N>> for Point<T,N> {
     type Output = Self;
 
     fn add(self, other: Vector<T, N>) -> Self::Output{
         //Use array_zip and array_map when they stabelize.
-        let mut arr = [T::zero(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = self[ind] + other[ind]
         }
@@ -69,12 +69,12 @@ impl<T: Add<Output = T> + num::Num + num::Zero + Copy, const N: usize> Add<Vecto
     }
 }
 
-impl<T: Sub<Output = T> + num::Num + num::Zero + Copy, const N: usize> Sub for Vector<T, N> {
+impl<T: Sub<Output = T> + Default + Copy, const N: usize> Sub for Vector<T, N> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output{
         //Use array_zip and array_map when they stabelize.
-        let mut arr = [T::zero(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = self[ind] - other[ind]
         }
@@ -82,12 +82,12 @@ impl<T: Sub<Output = T> + num::Num + num::Zero + Copy, const N: usize> Sub for V
     }
 }
 
-impl<T: Sub<Output = T> + num::Num + num::Zero + Copy, const N: usize> Sub<Vector<T, N>> for Point<T, N> {
+impl<T: Sub<Output = T> + Default + Copy, const N: usize> Sub<Vector<T, N>> for Point<T, N> {
     type Output = Self;
 
     fn sub(self, other: Vector<T, N>) -> Self::Output{
         //Use array_zip and array_map when they stabelize.
-        let mut arr = [T::zero(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = self[ind] - other[ind]
         }
@@ -95,12 +95,12 @@ impl<T: Sub<Output = T> + num::Num + num::Zero + Copy, const N: usize> Sub<Vecto
     }
 }
 
-impl<T: Sub<Output = T> + num::Num + num::Zero + Copy, const N: usize> Sub for Point<T, N> {
+impl<T: Sub<Output = T> + Default + Copy, const N: usize> Sub for Point<T, N> {
     type Output = Vector<T, N>;
 
     fn sub(self, other: Self) -> Self::Output{
         //Use array_zip and array_map when they stabelize.
-        let mut arr = [T::zero(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = self[ind] - other[ind]
         }
@@ -108,12 +108,12 @@ impl<T: Sub<Output = T> + num::Num + num::Zero + Copy, const N: usize> Sub for P
     }
 }
 
-impl<T: Mul<Output = T> + num::Num + Copy + num::One, const N: usize> Mul<T> for Vector<T, N> {
+impl<T: Mul<Output = T> + Default + Copy, const N: usize> Mul<T> for Vector<T, N> {
     type Output = Self;
 
     fn mul(self, rhs: T) -> Self::Output{
         //Use array_map when it stabelizes.
-        let mut arr = [T::one(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = self[ind] * rhs
         }
@@ -121,12 +121,12 @@ impl<T: Mul<Output = T> + num::Num + Copy + num::One, const N: usize> Mul<T> for
     }
 }
 
-impl<T: Div<Output = T> + num::Num + Copy + num::One, const N: usize> Div<T> for Vector<T, N> {
+impl<T: Div<Output = T> + Default + Copy, const N: usize> Div<T> for Vector<T, N> {
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output{
         //Use array_map when it stabelizes.
-        let mut arr = [T::one(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = self[ind] / rhs
         }
@@ -134,12 +134,12 @@ impl<T: Div<Output = T> + num::Num + Copy + num::One, const N: usize> Div<T> for
     }
 }
 
-impl<T: Neg<Output = T> + num::Num + num::Zero + Copy, const N: usize> Neg for Vector<T, N> {
+impl<T: Neg<Output = T> + Default + Copy, const N: usize> Neg for Vector<T, N> {
     type Output = Self;
 
     fn neg(self) -> Self::Output{
         //Use array_map when it stabelizes.
-        let mut arr = [T::zero(); N];
+        let mut arr = [T::default(); N];
         for ind in 0..N{
             arr[ind] = -self[ind]
         }
@@ -148,7 +148,7 @@ impl<T: Neg<Output = T> + num::Num + num::Zero + Copy, const N: usize> Neg for V
 }
 
 
-impl<'a, T: num::Num + Copy, const N: usize> IntoIterator for &'a Vector<T, N>{
+impl<'a, T: Copy, const N: usize> IntoIterator for &'a Vector<T, N>{
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
 
@@ -157,7 +157,7 @@ impl<'a, T: num::Num + Copy, const N: usize> IntoIterator for &'a Vector<T, N>{
     }
 }
 
-impl<'a, T: num::Num + Copy, const N:usize> IntoIterator for &'a Point<T, N>{
+impl<'a, T: Copy, const N:usize> IntoIterator for &'a Point<T, N>{
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
 
@@ -167,7 +167,7 @@ impl<'a, T: num::Num + Copy, const N:usize> IntoIterator for &'a Point<T, N>{
 }
 
 
-impl<T: num::Integer + Neg<Output = T> + Copy> Vector<T, 2>{
+impl<T: Neg<Output = T> + Default + Copy> Vector<T, 2>{
     pub fn rotate(self, angle: i32) -> Vector<T, 2>{
         let rotation_steps: i32 = util::modulo(angle, 360) / 90;
         match rotation_steps{
@@ -184,7 +184,7 @@ impl<T: num::Integer + Neg<Output = T> + Copy> Vector<T, 2>{
     }
 }
 
-impl<T: num::Integer + Div<Output = T> + Copy> Vector<T, 2>{
+impl<T: num::Integer + Div<Output = T> + Default + Copy> Vector<T, 2>{
     pub fn to_direction(self) -> Vector<T, 2>{
         let gcd = self[0].gcd(&self[1]);
         self / gcd
@@ -200,7 +200,7 @@ impl<T: num::Signed + Copy, const N: usize> Vector<T, N>{
     }
 }
 
-pub fn manhattan_metric<T: num::Signed + Copy, const N:usize>(a: Point<T, N>, b: Point<T, N>) -> T{
+pub fn manhattan_metric<T: num::Signed + Default + Copy, const N:usize>(a: Point<T, N>, b: Point<T, N>) -> T{
     (a - b).l1_norm()
 }
 

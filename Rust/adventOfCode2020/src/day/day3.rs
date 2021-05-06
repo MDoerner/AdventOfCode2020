@@ -19,7 +19,11 @@ impl super::Day for Day3{
             .map(|(y, line)| (y, tree_indices(&line)))
             .map(|(y, xs)| xs.into_iter().map(move |x| space::Point::new([x,y])))
             .flatten();
-        let grid = grid::LoopingGrid::new([width, height], false, points_with_trees.map(|point| (point, true)));
+        let coordinate_ranges = [
+            grid::CoordinateRange {lower_bound: 0, upper_bound: width},
+            grid::CoordinateRange {lower_bound: 0, upper_bound: height}
+        ];
+        let grid = grid::LoopingGrid::new(coordinate_ranges, false, points_with_trees.map(|point| (point, true)));
         Some(grid)
     }
 
@@ -70,7 +74,7 @@ fn trees_with_step(start_point: space::Point<usize, 2>, step: space::Vector<usiz
     }
     let mut current_point = start_point;
     let mut trees_encountered = 0;
-    while current_point[1] < slope.width()[1]{
+    while current_point[1] < slope.coordinate_ranges()[1].upper_bound{
         if *slope.at_point(&current_point){
             trees_encountered += 1;
         }
