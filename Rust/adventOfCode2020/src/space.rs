@@ -168,8 +168,8 @@ impl<'a, T: Copy, const N:usize> IntoIterator for &'a Point<T, N>{
 
 
 impl<T: Neg<Output = T> + Default + Copy> Vector<T, 2>{
-    pub fn rotate(self, angle: i32) -> Vector<T, 2>{
-        let rotation_steps: i32 = util::modulo(angle, 360) / 90;
+    pub fn rotate(self, angle: i64) -> Vector<T, 2>{
+        let rotation_steps: i64 = util::modulo(angle, 360) / 90;
         match rotation_steps{
             0 => self,
             1 => Vector{
@@ -204,6 +204,7 @@ pub fn manhattan_metric<T: num::Signed + Default + Copy, const N:usize>(a: Point
     (a - b).l1_norm()
 }
 
+/*
 pub fn neighbour_offsets_unidirectional<T: num::One + num::Zero + num::Num + Neg<Output = T> + Copy, const N: usize>() -> Vec<Vector<T, N>>{
     let mut offsets: Vec<Vector<T, N>> = vec![];
     for ind in 0..N{
@@ -216,6 +217,7 @@ pub fn neighbour_offsets_unidirectional<T: num::One + num::Zero + num::Num + Neg
     }
     offsets
 }
+*/
 
 pub fn neighbour_offsets_full<T: num::One + num::Zero + num::Num + Neg<Output = T> + Copy, const N: usize>() -> Result<Vec<Vector<T, N>>, TryFromIntError>{
     let n_u32 = u32::try_from(N)?;
