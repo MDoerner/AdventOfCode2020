@@ -8,6 +8,7 @@ mod game_of_life;
 
 #[macro_use] extern crate lazy_static;
 extern crate regex;
+extern crate num;
 
 #[cfg(test)] extern crate rstest;
 
