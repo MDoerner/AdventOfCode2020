@@ -102,7 +102,7 @@ impl super::Day for Day11{
             .collect();
         let game_of_life_rules = SimpleSeatingRules {seating_area};
         let game_of_life_runner = game_of_life::GameOfLife::new(game_of_life_rules);
-        let stabelized_occupied_seats = game_of_life_runner.active_items_after_stabelizing(initially_occupied_seats.iter(), seats.iter());
+        let stabelized_occupied_seats = game_of_life_runner.active_items_after_stabelizing(initially_occupied_seats.iter(), Some(seats.iter()));
         let number_of_occupied_seats = stabelized_occupied_seats.count();
         number_of_occupied_seats.to_string()
     }
@@ -129,7 +129,7 @@ impl super::Day for Day11{
             .collect();
         let game_of_life_rules = AdvancesSeatingRules {seating_area};
         let game_of_life_runner = game_of_life::GameOfLife::new(game_of_life_rules);
-        let stabelized_occupied_seats = game_of_life_runner.active_items_after_stabelizing(initially_occupied_seats.iter(), seats.iter());
+        let stabelized_occupied_seats = game_of_life_runner.active_items_after_stabelizing(initially_occupied_seats.iter(), Some(seats.iter()));
         let number_of_occupied_seats = stabelized_occupied_seats.count();
         number_of_occupied_seats.to_string()
     }

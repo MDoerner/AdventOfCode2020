@@ -18,13 +18,12 @@ impl<R: GameOfLifeRules> GameOfLife<R>
         GameOfLife{rules: game_rules}
     }
 
-    pub fn active_items_after_playing<'a>(&self, rounds_to_play: usize, initially_active_items: impl Iterator<Item=&'a R::ItemType>, initially_relevant_items: impl Iterator<Item=&'a R::ItemType>) -> impl Iterator<Item=R::ItemType> where R::ItemType:'a {
+    pub fn active_items_after_playing<'a>(&self, rounds_to_play: usize, initially_active_items: impl Iterator<Item=&'a R::ItemType>) -> impl Iterator<Item=R::ItemType> where R::ItemType:'a {
         let mut active_items: HashSet<R::ItemType> = initially_active_items
             .map(|item| item.to_owned())
             .collect();
-        let mut relevant_items: HashSet<R::ItemType> = initially_relevant_items
-            .map(|item| item.to_owned())
-            .collect();
+        let mut relevant_items: HashSet<R::ItemType> = self.relevant_items_after_changes(active_items.iter().cloned().collect());
+
         for _ in 0..rounds_to_play{
             if relevant_items.is_empty(){
                 break;
@@ -34,13 +33,16 @@ impl<R: GameOfLifeRules> GameOfLife<R>
         active_items.into_iter()
     }
 
-    pub fn active_items_after_stabelizing<'a>(&self, initially_active_items: impl Iterator<Item=&'a R::ItemType>, initially_relevant_items: impl Iterator<Item=&'a R::ItemType>) -> impl Iterator<Item=R::ItemType> where R::ItemType:'a {
+    pub fn active_items_after_stabelizing<'a>(&self, initially_active_items: impl Iterator<Item=&'a R::ItemType>, initially_relevant_items: Option<impl Iterator<Item=&'a R::ItemType>>) -> impl Iterator<Item=R::ItemType> where R::ItemType:'a {
         let mut active_items: HashSet<R::ItemType> = initially_active_items
             .map(|item| item.to_owned())
             .collect();
-        let mut relevant_items: HashSet<R::ItemType> = initially_relevant_items
-            .map(|item| item.to_owned())
-            .collect();
+        let mut relevant_items: HashSet<R::ItemType> = match initially_relevant_items {
+            Some(already_relevant_items) => already_relevant_items
+                .map(|item| item.to_owned())
+                .collect(),
+            None => self.relevant_items_after_changes(active_items.iter().cloned().collect())
+        };
         loop{
             if relevant_items.is_empty(){
                 break;
