@@ -1,4 +1,4 @@
-use std::{collections::HashMap, mem};
+use std::collections::HashMap;
 use std::convert::TryFrom;
 
 pub struct Day15 {}
@@ -24,7 +24,7 @@ impl super::Day for Day15{
 }
 
 fn number_spoken(initial_numbers: &[u128], position: u128) -> u128{
-    if initial_numbers.len() == 0 && position == 0{
+    if initial_numbers.is_empty() && position == 0{
         return 0;
     }
     let maybe_position_pointer = usize::try_from(position);

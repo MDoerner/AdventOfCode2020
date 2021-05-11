@@ -1,4 +1,4 @@
-use regex::Regex;
+
 
 pub struct PasswordRule{
     character: char,
@@ -33,9 +33,9 @@ impl super::Day for Day2{
 
 fn parse_password_data(line: &str) -> Option<(String, PasswordRule)>{
     lazy_static! {
-        static ref PASSWORD_RE: Regex = Regex::new(r"^(\d+)-(\d+) (\w): (.+)$").unwrap();
+        static ref PASSWORD_RE: regex::Regex = regex::Regex::new(r"^(\d+)-(\d+) (\w): (.+)$").unwrap();
     }
-    let captures = PASSWORD_RE.captures(line)?;
+    let captures: regex::Captures = PASSWORD_RE.captures(line)?;
     let password = captures[4].to_owned();
     let character = captures[3].chars().next()?;
     let min_number = captures[1].parse::<usize>().ok()?;
