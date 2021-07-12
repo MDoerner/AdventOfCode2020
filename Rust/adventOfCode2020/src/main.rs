@@ -5,6 +5,7 @@ mod algebra;
 mod space;
 mod grid;
 mod game_of_life;
+mod formula_parsing;
 
 #[macro_use] extern crate lazy_static;
 extern crate regex;

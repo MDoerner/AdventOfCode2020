@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
 
 use crate::game_of_life;
-use crate::space::{self, Point, Vector};
+use crate::space::{self, Point};
 
 
 pub struct Day17 {}
@@ -78,7 +78,7 @@ impl<const N: usize> game_of_life::GameOfLifeRules for ConwayCube<N>{
 
 
 #[cfg(test)]
-mod day16_tests {
+mod day17_tests {
     use super::*;
     use crate::input;
     use crate::day;
