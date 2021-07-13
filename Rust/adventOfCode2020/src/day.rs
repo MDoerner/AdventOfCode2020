@@ -16,6 +16,8 @@ mod day15;
 mod day16;
 mod day17;
 mod day18;
+mod day18_v2;
+
 
 pub trait DaySolver{
     fn solve_part1(&self, input: String) -> String;
