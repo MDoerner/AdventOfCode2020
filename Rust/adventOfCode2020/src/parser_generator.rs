@@ -84,6 +84,7 @@ pub enum GrammarContext{
 
 
 impl GrammarContext{
+    #[allow(dead_code)]
     pub fn start_index(&self) -> usize{
         match self{
             GrammarContext::ParserContext { start_index, ..} | GrammarContext::LexerContext { start_index, ..} => *start_index,

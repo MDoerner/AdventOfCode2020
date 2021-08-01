@@ -18,6 +18,7 @@ mod day17;
 mod day18;
 mod day18_v2;
 mod day19;
+mod day20;
 
 
 pub trait DaySolver{
@@ -63,6 +64,7 @@ pub fn get_day(&day: &i32) -> Option<Box<dyn DaySolver>>{
         17 => Some(Box::new(day17::Day17 {})),
         18 => Some(Box::new(day18_v2::Day18 {})),
         19 => Some(Box::new(day19::Day19 {})),
+        20 => Some(Box::new(day20::Day20 {})),
         _ => None
     }
 }
