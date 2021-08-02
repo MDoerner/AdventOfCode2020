@@ -330,8 +330,10 @@ fn assembled_tiles(tiles_by_id: &HashMap<u64, Tile>) -> Vec<Vec<(u64, Orientatio
     let mut rows = vec![];
     let ids_by_border_code = tiles_by_border_code(&tiles_by_id);
     let border_ids_with_border_codes = border_tiles_with_border_codes(&ids_by_border_code);
-    let corner_ids = corner_ids(&border_ids_with_border_codes);
-    let first_row = arranged_first_row(corner_ids[0], &tiles_by_id, &ids_by_border_code, &border_ids_with_border_codes);
+    let mut corner_ids = corner_ids(&border_ids_with_border_codes);
+    corner_ids.sort_unstable(); //This is here to make the results deterministic.
+    let start_corner = corner_ids[0];
+    let first_row = arranged_first_row(start_corner, &tiles_by_id, &ids_by_border_code, &border_ids_with_border_codes);
 
     let mut maybe_current_row = Some(first_row);
     while maybe_current_row.is_some(){
@@ -375,9 +377,12 @@ fn upper_left_corner_orientation(corner_id: u64, boder_ids_with_border_codes: &H
         .filter(|(_, or)| !or.flip)
         .map(|(_, or)| or.rotation())
         .collect();
+    if non_flip_rotations.len() != 2{
+        panic!("Unexpected number of non-flip border codes!")
+    }
     non_flip_rotations.sort_unstable();
-    if non_flip_rotations[0] == (Border::Left.into())
-        &&  non_flip_rotations[1] == (Border::Upper.into()){
+    if non_flip_rotations[1] == (Border::Left.into())
+        &&  non_flip_rotations[0] == (Border::Upper.into()){
             Orientation { rotation: 0, flip: false }
     } else {
         Orientation { rotation: non_flip_rotations[0] + 1, flip: false }
