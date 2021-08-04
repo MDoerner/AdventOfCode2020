@@ -151,7 +151,7 @@ r#"389125467"#)
     #[case(8, String::from("58392674"))]
     #[case(9, String::from("83926574"))]
     #[case(10, String::from("92658374"))]
-    fn examples_part1(#[case] number_of_rounds: usize, #[case] expected_result: String) {
+    fn basic_examples_part1(#[case] number_of_rounds: usize, #[case] expected_result: String) {
         let day: Box<dyn day::Day<PuzzleInput = Vec<usize>>> = Box::new(Day23{});
         let problem_input = example_input();
         let cups = day.parse_input(problem_input);
